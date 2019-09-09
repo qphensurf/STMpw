@@ -49,7 +49,6 @@ ey2=sqrt(ey_x**2+ey_y**2)
 ey_x=ey_x/ey2; ey_y=ey_y/ey2
 
 set size ratio -1
-load '/home/robles/programas/propios/stm_nicolas_vasp.5/palettes_wsxm/Julio.lut.pal'
 splot "Topography.gnu" u (ex_x*\$1+ey_x*\$2):(ex_y*\$1+ey_y*\$2):(\$3) notitle
 !
 gnuplot stm.gnu
