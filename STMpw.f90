@@ -57,8 +57,8 @@ program STMpw
          npts = 1000
        endif
        cdIdV = cdIdV / bohr
-       allocate(V1(ndiv))
-       allocate(IV(npts,ndiv))
+       allocate(V1(ndiv+1))
+       allocate(IV(npts,ndiv+1))
        allocate(ngp(npts,3))
        write(*,'(A,F7.3,A,F7.3,A)') "Calculation of IV curves between ",Vmin," eV and ",Vmax," eV"
      endif
@@ -254,11 +254,12 @@ program STMpw
 !         endif
 !       enddo
 
-        do jv=1,ndiv
+        do jv=1,ndiv+1
           V1(jv) = Vmin + (Vmax-Vmin)/(ndiv-1)*(jv-1) 
           V1(jv) = V1(jv) / hartree
 !          write(*,*) "V(",jv,")=",V1(jv)
         enddo
+        ndiv = ndiv + 1
 
         do iy = 0, ngy
           do ix = 0, ngx
@@ -309,11 +310,16 @@ program STMpw
 
 ! compute current as we read WF file
 
-     intensity = 0
-     dintensity_dV = 0
-     Tersoff_t =  0
+     if(Bardeen) then
+       intensity = 0
+       dintensity_dV = 0
+       if(LDIDV) intensity2 = 0
+       Tersoff_t =  0
+     endif
      Tersoff_c =  0
      Tersoff_s =  0
+     if(LDIDV) Tersoff_s2 = 0
+
 !     density_z = 0
 
 !Loop on spin and k-points
@@ -555,7 +561,7 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
          Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (Number_of_KPOINTS) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
        & * constant_I 
-         Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
+         if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
        & (Number_of_KPOINTS)
          Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (Number_of_KPOINTS)
@@ -563,7 +569,7 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
          Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
        & * constant_I 
-         Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
+         if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
          Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
@@ -571,7 +577,7 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
          Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
        & * constant_I 
-         Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + 2.0*TH_t (:,:)/vol/ &
+         if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + 2.0*TH_t (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
          Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
@@ -592,7 +598,7 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
          Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (Number_of_KPOINTS) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
        & * constant_I
-         Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
+         if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
        & (Number_of_KPOINTS)
          Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (Number_of_KPOINTS)
@@ -600,7 +606,7 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
          Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
        & * constant_I
-         Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
+         if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
          Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
@@ -608,7 +614,7 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
          Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
        & * constant_I
-         Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + 2.0*TH_t (:,:)/vol/ &
+         if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + 2.0*TH_t (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
          Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
@@ -932,10 +938,10 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
         write(cnpt,'(I6)') ip
         name_file = 'dIdV_curves/IV_TH_npt_'//trim(adjustl(cnpt))//'.dat'
         open (unitIV,file=name_file)
-        write(unitIV,'(A,3F7.3,A)') "# IV for point (",(cdIdV(ip,j)*bohr,j=1,3),")"
+!        write(unitIV,'(A,3F7.3,A)') "# IV for point (",(cdIdV(ip,j)*bohr,j=1,3),")"
         write(unitIV,'(A,3F7.3,A)') "# Actual point (", &
                 cngx(ngp(ip,1),ngp(ip,2)),cngy(ngp(ip,1),ngp(ip,2)),bohr*(z_s*A(3,3)+stepZ*(ngp(ip,3)-1)),")"
-        do jv=1,ndiv
+        do jv=1,ndiv-1
          if(V1(jv).lt.0) Tersoff_s2(ip,jv) = -1.0 * Tersoff_s2(ip,jv)
          write(unitIV,*) V1(jv)*hartree,Tersoff_s2(ip,jv)
         enddo
@@ -946,7 +952,7 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
         write(cnpt,'(I6)') ip
         name_file = 'dIdV_curves/dIdV_TH_npt_'//trim(adjustl(cnpt))//'.dat'
         open (unitIV,file=name_file)
-        write(unitIV,'(A,3F7.3,A)') "# dIdV for point (",(cdIdV(ip,j)*bohr,j=1,3),")"
+!        write(unitIV,'(A,3F7.3,A)') "# dIdV for point (",(cdIdV(ip,j)*bohr,j=1,3),")"
         write(unitIV,'(A,3F7.3,A)') "#   Actual point (", &
                 cngx(ngp(ip,1),ngp(ip,2)),cngy(ngp(ip,1),ngp(ip,2)),bohr*(z_s*A(3,3)+stepZ*(ngp(ip,3)-1)),")"
         do jv=1,ndiv-1
@@ -961,10 +967,10 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
         write(cnpt,'(I6)') ip
         name_file = 'dIdV_curves/IV_Bardeen_npt_'//trim(adjustl(cnpt))//'.dat'
         open (unitIV,file=name_file)
-        write(unitIV,'(A,3F7.3,A)') "# IV for point (",(cdIdV(ip,j)*bohr,j=1,3),")"
+!        write(unitIV,'(A,3F7.3,A)') "# IV for point (",(cdIdV(ip,j)*bohr,j=1,3),")"
         write(unitIV,'(A,3F7.3,A)') "# Actual point (", &
                 cngx(ngp(ip,1),ngp(ip,2)),cngy(ngp(ip,1),ngp(ip,2)),bohr*(z_s*A(3,3)+stepZ*(ngp(ip,3)-1)),")"
-        do jv=1,ndiv
+        do jv=1,ndiv-1
          if(V1(jv).lt.0) intensity2(ip,jv) = -1.0 * intensity2(ip,jv)
          write(unitIV,*) V1(jv)*hartree,intensity2(ip,jv)
         enddo
@@ -975,7 +981,7 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
         write(cnpt,'(I6)') ip
         name_file = 'dIdV_curves/dIdV_Bardeen_npt_'//trim(adjustl(cnpt))//'.dat'
         open (unitIV,file=name_file)
-        write(unitIV,'(A,3F7.3,A)') "# dIdV for point (",(cdIdV(ip,j)*bohr,j=1,3),")"
+!        write(unitIV,'(A,3F7.3,A)') "# dIdV for point (",(cdIdV(ip,j)*bohr,j=1,3),")"
         write(unitIV,'(A,3F7.3,A)') "#   Actual point (", &
                 cngx(ngp(ip,1),ngp(ip,2)),cngy(ngp(ip,1),ngp(ip,2)),bohr*(z_s*A(3,3)+stepZ*(ngp(ip,3)-1)),")"
         do jv=1,ndiv-1
@@ -1014,13 +1020,15 @@ CONTAINS
 !       allocate (density1(ngz))
        allocate (temp(0:ngx-1,0:ngy-1,0:ngz-1))
 
-       allocate (intensity(0:ngx-1,0:ngy-1,N_sampling_z,nV))
-       allocate (intensity2(npts,ndiv))
+       if(Bardeen) then
+         allocate (intensity(0:ngx-1,0:ngy-1,N_sampling_z,nV))
+         allocate (Tersoff_t(0:ngx-1,0:ngy-1,N_sampling_z,nV))
+         allocate (dintensity_dV(0:ngx-1,0:ngy-1,N_sampling_z,nV))
+         if(LDIDV) allocate (intensity2(npts,ndiv))
+       endif  
        allocate (Tersoff_s(0:ngx-1,0:ngy-1,N_sampling_z,nV))
-       allocate (Tersoff_s2(npts,ndiv))
-       allocate (Tersoff_t(0:ngx-1,0:ngy-1,N_sampling_z,nV))
        allocate (Tersoff_c(0:ngx-1,0:ngy-1,N_sampling_z,nV))
-       allocate (dintensity_dV(0:ngx-1,0:ngy-1,N_sampling_z,nV))
+       if(LDIDV) allocate (Tersoff_s2(npts,ndiv))
        allocate (currentSQ(0:ngx-1,0:ngy-1))
        allocate (TH_s(0:ngx-1,0:ngy-1))
        allocate (TH_t(0:ngx-1,0:ngy-1))
