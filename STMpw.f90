@@ -1057,7 +1057,7 @@ CONTAINS
 
       type( vasp )   vasp_line
 
-      logical :: Bardeen, fractional, selective = .false.
+      logical :: fractional, selective = .false.
 
       character (len = 2) :: typelist(50) = "0", norm_name
       integer :: ntyp1, znumber(50) = 0, nionlist(80) = 0
@@ -1220,6 +1220,11 @@ CONTAINS
 ! z_t = Ztip - 2.0 angstroems
 
        z_t = coor_tip - 2.0 / (lat_par * cell(3,3))
+
+     if(Bardeen) then
+      write(*,'(A,F10.5)') "Coord. tip = ", coor_tip
+      write(*,'(A,F10.6)') "z_t = ", z_t
+     endif
 
 ! if z_s < 0 it indicates the distance above the topmost atom
       if (z_s < 0) then
