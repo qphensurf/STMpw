@@ -16,7 +16,7 @@
   integer :: Ngx, Ngy, Ngz, n_species
   integer :: Number_of_SPIN, Total_Bands, Number_of_KPOINTS
   integer ::  unitWF, unitI, unitdI,unitMAP,unitTH,unitTIP,unitTHcub,unitdITHcub,unitIV
-  integer ::  unitIdat, unitTHdat, unitdITHdat, unitTIPdat
+  integer ::  unitIdat, unitdIdat, unitTHdat, unitdITHdat, unitTIPdat
   integer ::  spin1,  kp, iband, tband, sband
   integer ::  ios, N_sampling_z 
   integer :: ix, iy, iz, ip

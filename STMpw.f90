@@ -132,6 +132,8 @@ program STMpw
       unitIdat = 19
 ! output conductance unit
       unitdI = 10
+! output conductance unit
+      unitdIdat = 25
 ! output current units Tersoff-Hamman
       unitTH = 11
       unitTHdat = 21
@@ -227,8 +229,8 @@ program STMpw
 
       Zmin = (z_s - Zsurf) * A(3,3)
 
-      stepX = sqrt(sum(A(:,1)**2))/(Ngx+1)
-      stepY = sqrt(sum(A(:,2)**2))/(Ngy+1)
+      stepX = sqrt(sum(A(:,1)**2))/(Ngx)
+      stepY = sqrt(sum(A(:,2)**2))/(Ngy)
 ! matching point to tip distance
       distance = (Ztip-z_t) * A(3,3)
 
@@ -842,18 +844,18 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
 ! not extremely useful because you can't do a scan on voltage
 ! but you can get a conductance map
 
-         if (Bardeen) then
-           name_file = 'V_'//trim(adjustl(volt))//'/dIdV_Bardeen_V_'//trim(adjustl(volt))//'.siesta'
-           open (unitdI,file=name_file, form = 'unformatted')
-           write (unitdI) UCELL
-           write (unitdI) ngx, ngy, N_sampling_z,1
-           do iz= 1, N_sampling_z
-             do iy= 0, ngy-1
-               write (unitdI) (real(dintensity_dV (ix,iy,iz,jv)*factor), ix=0,ngx-1)
-             enddo
-           enddo
-           close (unitdI)
-         endif
+!         if (Bardeen) then
+!           name_file = 'V_'//trim(adjustl(volt))//'/dIdV_Bardeen_V_'//trim(adjustl(volt))//'.siesta'
+!           open (unitdI,file=name_file, form = 'unformatted')
+!           write (unitdI) UCELL
+!           write (unitdI) ngx, ngy, N_sampling_z,1
+!           do iz= 1, N_sampling_z
+!             do iy= 0, ngy-1
+!               write (unitdI) (real(dintensity_dV (ix,iy,iz,jv)*factor), ix=0,ngx-1)
+!             enddo
+!           enddo
+!           close (unitdI)
+!         endif
         endif
 
         if(dat) then
@@ -865,10 +867,13 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
           if (Bardeen) open (unitTIPdat,file=name_file)
           name_file = 'V_'//trim(adjustl(volt))//'/dIdV_TH.dat'
           open (unitdITHdat,file=name_file)
+          name_file = 'V_'//trim(adjustl(volt))//'/dIdV_Bardeen.dat'
+          if (Bardeen) open (unitdIdat,file=name_file)
           write(unitdITHdat,*) N_sampling_z, ngy, ngx
           write(unitTHdat,*) N_sampling_z, ngy, ngx
           if (Bardeen) write(unitTIPdat,*) N_sampling_z, ngy, ngx
           if (Bardeen) write(unitIdat,*) N_sampling_z, ngy, ngx
+          if (Bardeen) write(unitdIdat,*) N_sampling_z, ngy, ngx
           do iz= 1, N_sampling_z
            do iy = 0, ngy-1
             do ix = 0, ngx-1
@@ -880,6 +885,8 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
                bohr*(Zmin+stepZ*(iz-1)), bohr*(iy)*stepY, bohr*(ix)*stepX, Tersoff_t(ix,iy,iz,jv) 
              if (Bardeen) write (unitIdat,'(4g14.4)') &
                bohr*(Zmin+stepZ*(iz-1)),bohr*(iy)*stepY, bohr*(ix)*stepX, intensity (ix,iy,iz,jv)
+             if (Bardeen) write (unitdIdat,'(4g14.4)') &
+               bohr*(Zmin+stepZ*(iz-1)),bohr*(iy)*stepY, bohr*(ix)*stepX, dintensity_dV (ix,iy,iz,jv)
             enddo
            enddo
           enddo
@@ -887,6 +894,7 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
           close(unitTHdat)
           if (Bardeen) close(unitTIPdat)
           if (Bardeen) close(unitIdat)
+          if (Bardeen) close(unitdIdat)
           close(unitdITHdat)
         endif
 

@@ -149,11 +149,16 @@ program Cond_gnu
        cond = abs (cond)
 
        open (unit_topo, file = 'Conductance.gnu')
+       x(ngx) = x(ngx-1)+x(1)
+       y(ngy) = y(ngy-1)+y(1)
+       cond(ngx,:)=cond(0,:)
+       cond(:,ngy)=cond(:,0)
+       cond(ngx,ngy)=cond(0,0)
        do ix = 0,nx-1
-        do jx = 0,ngx-1
+        do jx = 0,ngx
          do iy = 0,ny-1
-          do jy = 0,ngy-1
-           write (unit_topo,*) x(jx) + ix*(x(ngx-1)+x(1)), y(jy) + iy*(y(ngy-1)+y(1)), cond (jx,jy)
+          do jy = 0,ngy
+           write (unit_topo,*) x(jx) + ix*(x(ngx)+x(1)), y(jy) + iy*(y(ngy)+y(1)), cond (jx,jy)
           enddo
          enddo 
          write(unit_topo,*)
