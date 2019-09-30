@@ -29,9 +29,9 @@ program Cond_gnu
        allocate (intensity (0:ngx-1, 0:ngy-1, N_sampling_z))
        allocate (conductance (0:ngx-1, 0:ngy-1, N_sampling_z))
        allocate (z(N_sampling_z))
-       allocate (y(0:ngy-1))
-       allocate (x(0:ngx-1))
-       allocate (cond(0:ngx-1, 0:ngy-1))
+       allocate (y(0:ngy))
+       allocate (x(0:ngx))
+       allocate (cond(0:ngx, 0:ngy))
        allocate (temp(2*ngx, 2*ngy))
 
        do iz= 1, N_sampling_z
