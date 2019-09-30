@@ -20,12 +20,12 @@ OBJ = declaration.o declfft.o determinequantities.o  \
 STMpw.out: $(OBJ)
 	$(FC) $(FLAGS) $(OBJ) $(LINK) -o STMpw.out
 
-utils: Imagen_gnu.out Cond_gnu.out
+utils: Imagen_Bardeen_gnu.out Cond_gnu.out
 
 all: utils STMpw.out
 
-Imagen_gnu.out: 
-	$(FC) $(FLAGS) Utils/Imagen_gnu.f90 -o Utils/Imagen_gnu.out
+Imagen_Bardeen_gnu.out: 
+	$(FC) $(FLAGS) Utils/Imagen_Bardeen_gnu.f90 -o Utils/Imagen_Bardeen_gnu.out
 
 Cond_gnu.out:
 	$(FC) $(FLAGS) Utils/Cond_gnu.f90 -o Utils/Cond_gnu.out
