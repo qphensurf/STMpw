@@ -1,146 +1,104 @@
-STMpw.f90
+﻿# STMpw
 
-Simple implementation for Bardeen's transfer hamiltonian
-and tunneling extension for the STM
+STMpw is a program to perform STM simulations in the *Tersoff-Hamman* and *Bardeen* approximations. It is a postprocessing utility for DFT planewave codes, but at the moment it is just interfaced with [VASP](https://www.vasp.at).
 
-Depending on the paramenters of 
-the input file : input.STMpw
-this program can perform
+The program can perform:
 
-      a) Constant current STM images
-      b) dI/dV maps 
+    a) Constant current and constant height STM images
+    b) dI/dV maps in constant current and constant height modes
+    c) dI/dV curves
 
-Approximations:
+## Approximations
 
-  This program is to be used as a VASP post-processing 
-utility. In order to make it very fast the main approximation is to
-calculate a tip in the same cell as the object under study.
+* The program imposes that the wavefunctions exponentially decay in vacuum. So starting by a plane **z_s** located above the system of interest the wavefunctions from the DFT calculation are matched to an exponential function decaying into the vacuum.
 
-  Plus the k-point sampling should be such that no k-points falls
-on the Brillouin zone boundary, otherwise the real space integrals
-give delta's on the reciprocal vectors that can be satisfied by
-combinations of k-points and reciprocal vectors G.
+* Temperature is zero. The bias voltage effect will be much larger.
 
-  Third: we have assumed the same workfunction for tip and sample
-this approximation is not necessary but makes life easier and our
-experience is that in first approximation, it's more than fine.
+* The energy-conservation delta's are replaced by Gaussians with a hardwired sigma of 0.25 eV.
 
-  Fourth: temperature is zero. The bias voltage effect will be
-much larger.
+* (*Bardeen*) In order to make it very fast the main approximation is to calculate a tip in the same cell as the object under study.
 
-  Fifth: the energy-conservation delta's are replaced by gaussians
-following the equation
+* (*Bardeen*) The program assumes the same workfunction for tip and sample. This approximation is not necessary, but makes life easier and our experience is that, in first approximation, it's more than fine.
 
-      \begin{equation}
-         \delta (E) \approx 
-            \frac{1}{\sqrt(\pi) \sigma} \exp( - (E/\sigma)^2 )
-      \end{equation}
+* (*Bardeen*) The wavefunctions of the tip are also matched to exponential functions from a plane **z_t**.
 
-\sigma is the variable sigma in this code and is hardwired to 0.25 eV
-in declaration.f90
+## Compilation
 
-  Sixth: the wavefunctions are exponentially decaying in vacuum, using
-the following expression
+The program is compiled using the included Makefile by typing *make* in the main directory. The program has been tested in linux with INTEL and GNU FORTRAN compilers. 
 
-      \begin{equation}
-         \psi(\vect{r}) \sim
-            \frac{1}{\sqrt{vol}} \sum_{\vect{G}} A_G (z_s) 
-                  \exp(-\sqrt(2\phi+(k+G)^2)|z-z_s|)
-                  \exp(i G \cdot r)
-      \end{equation}
-
-where G are the reciprocal vectors of the 3-D FFT. We match
-this asymptotic form of the wf at a plane located at z_s (in
-the code we keep this notation) with workfuntion phi. 
-For the tip wavefunction we use the same notation except for
-the 2-D FFT are called C_G and the matching distance is
-z_t.
-
-
-Instructions:
-
-First run either VASP (for a and b above) or deltaWF (for c)
-where the atomic configuration should be
-
-          |         ttttssss      |
-          |        tttttssssm     |
-          |       ttttttssssm     |
-          |        tttttssssm     |
-          |         ttttssss      |
-                 
-          |<-------- unit cell -->|
-
-      t: 'tip' atoms
-      s: 'substrate' atoms
-      m: 'molecule' atoms
-
-This code needs the tip higher than the molecule
-as is seen in the above scheme if you use the
-periodicity of the cell.
-
-Second determine z_s and z_t (see Sixth above) as
-the distance to the surface (last layer 's') by
-looking at the density versus 'z' behavior: the
-first point where it is exponentially decaying near
-the molecule (z_s) and the tip (z_t).
-If z_s < 0 it is the distance (in A) above the topmost atom
- starting from which we assume an exponential decay.
-
-z_t is hardwired:
-z_t is calculated in this code as 2.0 Angs below
-the most protruding atom below Ztip.
-
-Hence Zsurf < z_s < z_t < Ztip is compulsory!
-
-ACHTUNG BITTE:
-     Distances are then referred to both surfaces (sample and tip)
-     but the sampling region is only between z_s and z_t, because it
-     is the 'asymptotic' region.
-
-Third fill in the file input.STMpw with the following lines
-
------------------------------------------------------------------
-                 input.STMpw
------------------------------------------------------------------
-
-
-    T ! whether we use Bardeen aprox. or just Tersoff-Hamman 
-    4.5 ! phi in eV                                          
-    2 ! Number of voltages to calculate
-    1.0 -1.0 ! tip-substrate voltage in V (tip to mass)
-    50 ! sampling points in z (perpendicular to the surface)
-    10 ! Zmax, maximum tip-surface distance (from 'Zsurf') in \AA
-    0.41111 ! Zsurf, origin of the surface in direct coordinates
-    0.95555 ! Ztip, origin of the tip in direct coordinates
-    0.65000 ! z_s in direct coordinates (neg. values indicate distance from the topmost atom in angs)
-    T ! calculate dIdV curve
-    -1 1 ! emin, emax for dIdV
-    100 ! number of divisions between emin and emax
-    2 ! number of points to plot the dIdV curve
-    1.721 0.994 16.000 ! coordinates of the point in \AA
-    0.000 0.000 16.000 ! coordinates of the point in \AA
-    POSCAR ! POSCAR file
-    WAVECAR  ! wf file 
-    MappingsCAR  !  reciprocal vector and index file
-    LGAMMA ! .true. or .false. wether the k-point sampling contains the Gamma point or not.
-    T ! do you want the output in cube format?
-
------------------------------------------------------------------
-                End of input.STMpw
------------------------------------------------------------------
-
- Fourth execute STMpw.out
-
- Output: Bardeen.siesta (unformatted)
-
- run WSxM and read in Bardeen.siesta
-
- Last edit
+It is require to provide a FFTW implementation. The performance of the program will dramatically depend on the performance of the FFTW library, so it is strongly recommended to use an optimized version for your system. MKL typically offers a good performance.
  
-    10/09/08  (yr/month/day)
-    (2014-07-16) RRR: modification to use vasp4 or vasp5 format.
-    (2019-05-24) RRR: modification to use just the TH part.
-    (2019-05-28) RRR: modification to support cube files in the TH part.
-    (2019-07-16) RRR: modification to include several voltages in the same run.
-    (2019-07-17) RRR: modification to calculate dIdV curves.
-    (2019-08-07) RRR: modification to calculate MappingsCAR from OUTCAR.
+The Makefile file must be adapted to your system by choosing a FORTRAN compiler and a FFTW library.
+
+## Usage
+
+ 1.  You must run VASP with some requirements:
+
+* Schematically the unit cell must have the form:
+
+             |ttttttttttt|
+             |ttttttttttt|
+             |    ttt    |
+             |     t     |
+             |           |
+             |           |
+             |           |
+             |    mmm    |
+             |sssssssssss|
+             |sssssssssss|
+             |sssssssssss|
+             
+        t: tip atoms (for Bardeen only)
+        s: substrate atoms
+        m: molecule atoms
+
+	Therefore the molecule must be above the surface and (for Bardeen) the tip must be above the molecule.
+
+* VASP must be run in the **standard** version (the gamma version is not supported at this moment).
+* The use of symmetry in VASP is not allowed: SYM=0 **must** be included in the INCAR file.
+* The calculation must be carefully converged in k-points, especially for dI/dV maps and curves.
+
+	Once the VASP has converged POSCAR, OUTCAR and WAVECAR must be kept and supplied to STMpw. 
+
+ 2. You must determine the plane **z_s** from which the wavefunctions will be substituted by exponential functions. First you have to look for the last surface layer to be used as reference (**Zsurf**). Then you look at the density vs density behavior to look for the first point where there is an exponential decay. The z value of this point in direct coordinates will be **z_s**. Typically this point is around 2-3 angstroms above the most protruding atom of the molecule. So to speed things up a negative value of **z_s** indicates a distance in angstroms above the most protruding atom. In addition, if you are using the Bardeen approach the origin of the tip **Ztip** must be supplied. **z_t** is hardwired to 2 angstroms below the most protruding atom of the tip. At the end you should have **Zsurf < z_s < z_t < Ztip**.
+
+3. You must create an input.STMpw file as follow:
+
+	   **phi**   ! workfunction of the surface in eV 
+	   **n**   ! number of voltages to calculate
+	   **V1...Vn**   ! n values of tip-substrate voltages in V (tip to mass)
+	   **nZ**   ! sampling points in z (perpendicular to the surface)
+	   **Zmax**   ! maximum tip-surface distance (from 'Zsurf') in angstroms.
+	   **Zsurf**   ! origin of the surface in direct coordinates
+	   **z_s**   ! as explained above
+	   **Bardeen**    ! T for Bardeen and and F for Tersoff-Hamman
+	   **Ztip**   ! (only if Bardeen=T) origin of the tip in direct coordinates
+	   **dIdV**   ! T or F, whether we calculate the dIdV curve
+	   **emin emax**   ! (if dIdV=T) range of energy for dIdV
+	   **ndiv**   ! (if dIdV=T) number of divisions between emin and emax
+	   **Np** ! (if dIdV=T) number of points to plot the dIdV curve
+	   **x1, y1, z1** ! (if dIdV=T) coordinates of the first point
+	   ...
+	   **xNp, yNp, zNp** ! (if dIdV=T) coordinates of the nP point
+	   **name_POSCAR**   ! name of the POSCAR file
+	   **name_WAVECAR**   ! name of the WAVECAR file 
+	   **mapfile**   ! T to read a reciprocal vector and index file or F to generate it
+	   **name_mapfile**   ! (if mapfile=T) name of the reciprocal vector and index file
+	   **Gamma**   ! T or F, whether the k-point sampling contains the Gamma point or not.
+	   **wsxm**   ! T or F, WSxM output?
+	   **factor**   ! (if wsxm=T) multiplying factor for WSxM output files
+	   **gnuplot** ! T or F, plain output to use in gnuplot?
+	   **cube**   ! T or F, cube format output?
+
+4. Different output files are produced. For each required voltage a directory with the name **V_voltage** is created. Inside different files are produced depending on the required output. 
+* **WSxM**: output for the [WSxM](http://www.wsxm.es/download.html) program. There is a TH_V_voltage.siesta file for *Tersoff-Hamann* and Bardeen_V_voltage.siesta and TH_tip_V_voltage.siesta files for *Bardeen*. They can be directly read by WsXM and processed using: Process -> Filter -> Create STM type image...
+* **gnuplot**: .dat plain files. They can be plotted, for example, with gnuplot. In the Utils directory there are different programs and scripts to process them.
+* **cube**: files in the cube format. At the moment there are just for *Tersoff-Hamann*: TH_V_voltage.cube for STM images and dIdV_TH_V_voltage.cube for dIdV maps. cube is a standard format which can be read by many programs, including the last versions of WSxM.
+
+	**Note**: distances are referred to both surfaces (sample and tip) but the sampling region is only between **z_s** and **z_t**, because it is the 'asymptotic' region.
+
+## Authors
+Nicolás Lorente and Roberto Robles based in the Bardeen2 code of Nicolás Lorente.
+
+## License
+GNU General Public License v3.0
