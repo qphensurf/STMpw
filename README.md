@@ -32,7 +32,7 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 
 ## Usage
 
- 1.  You must run VASP with some requirements:
+1.  You must run VASP with some requirements:
 
 * Schematically the unit cell must have the form:
 
@@ -60,9 +60,14 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 
 	Once the VASP has converged POSCAR, OUTCAR and WAVECAR must be kept and supplied to STMpw. 
 
- 2. You must determine the plane **z_s** from which the wavefunctions will be substituted by exponential functions. First you have to look for the last surface layer to be used as reference (**Zsurf**). Then you look at the density vs density behavior to look for the first point where there is an exponential decay. The z value of this point in direct coordinates will be **z_s**. Typically this point is around 2-3 angstroms above the most protruding atom of the molecule. So to speed things up a negative value of **z_s** indicates a distance in angstroms above the most protruding atom. In addition, if you are using the Bardeen approach the origin of the tip **Ztip** must be supplied. **z_t** is hardwired to 2 angstroms below the most protruding atom of the tip. At the end you should have **Zsurf < z_s < z_t < Ztip**.
+2. You must determine the plane **z_s** from which the wavefunctions will be substituted by exponential functions. First you have to look for the last surface layer to be used as reference (**Zsurf**). Then you look at the density vs density behavior to look for the first point where there is an exponential decay. The z value of this point in direct coordinates will be **z_s**. Typically this point is around 2-3 angstroms above the most protruding atom of the molecule. So to speed things up a negative value of **z_s** indicates a distance in angstroms above the most protruding atom. In addition, if you are using the Bardeen approach the origin of the tip **Ztip** must be supplied. **z_t** is hardwired to 2 angstroms below the most protruding atom of the tip. At the end you should have **Zsurf < z_s < z_t < Ztip**.
 
-3. You must create an input.STMpw file as follow:
+3. For the calculation of dI/dV curves you must determine 
+* The range of energies to use (refered to Fermi energy = 0 eV). 
+* The number of divisions on that range
+* In which points the curves will be determined. Tipically we select the *x* and *y* coordinates of one atom (in angstroms) and a *z* value several angstroms over the *z* of the atom.
+
+4. You must create an input.STMpw file as follows:
 
    	   phi   ! workfunction of the surface in eV 
 	   n   ! number of voltages to calculate
@@ -77,9 +82,9 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 	   emin emax   ! (if dIdV=T) range of energy for dIdV
 	   ndiv   ! (if dIdV=T) number of divisions between emin and emax
 	   Np ! (if dIdV=T) number of points to plot the dIdV curve
-	   x1, y1, z1 ! (if dIdV=T) coordinates of the first point
+	   x1, y1, z1 ! (if dIdV=T) coordinates of the first point (in angstroms)
 	   .
-	   xNp, yNp, zNp ! (if dIdV=T) coordinates of the nP point
+	   xNp, yNp, zNp ! (if dIdV=T) coordinates of the nP point (in angstroms)
 	   name_POSCAR   ! name of the POSCAR file
 	   name_WAVECAR   ! name of the WAVECAR file 
 	   mapfile   ! T to read a reciprocal vector and index file or F to generate it
@@ -90,7 +95,9 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 	   gnuplot ! T or F, plain output to use in gnuplot?
 	   cube   ! T or F, cube format output?
 
-4. Different output files are produced. For each required voltage a directory with the name **V_voltage** is created. Inside different files are produced depending on the required output. 
+	Some examples can be found in Utils.
+
+5. Different output files are produced. For each required voltage a directory with the name **V_voltage** is created. Inside different files are produced depending on the required output. 
 * **WSxM**: output for the [WSxM](http://www.wsxm.es/download.html) program. There is a TH_V_voltage.siesta file for *Tersoff-Hamann* and Bardeen_V_voltage.siesta and TH_tip_V_voltage.siesta files for *Bardeen*. They can be directly read by WsXM and processed using: Process -> Filter -> Create STM type image...
 * **gnuplot**: .dat plain files. They can be plotted, for example, with gnuplot. In the Utils directory there are different programs and scripts to process them.
 * **cube**: files in the cube format. At the moment there are just for *Tersoff-Hamann*: TH_V_voltage.cube for STM images and dIdV_TH_V_voltage.cube for dIdV maps. cube is a standard format which can be read by many programs, including the last versions of WSxM.
