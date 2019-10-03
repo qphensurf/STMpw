@@ -83,7 +83,7 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 	   ndiv   ! (if dIdV=T) number of divisions between emin and emax
 	   Np ! (if dIdV=T) number of points to plot the dIdV curve
 	   x1, y1, z1 ! (if dIdV=T) coordinates of the first point (in angstroms)
-	   .
+	   ...
 	   xNp, yNp, zNp ! (if dIdV=T) coordinates of the nP point (in angstroms)
 	   name_POSCAR   ! name of the POSCAR file
 	   name_WAVECAR   ! name of the WAVECAR file 
