@@ -64,7 +64,7 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 
 3. You must create an input.STMpw file as follow:
 
-	   **phi**   ! workfunction of the surface in eV 
+   **phi**   ! workfunction of the surface in eV 
 	   **n**   ! number of voltages to calculate
 	   **V1...Vn**   ! n values of tip-substrate voltages in V (tip to mass)
 	   **nZ**   ! sampling points in z (perpendicular to the surface)
