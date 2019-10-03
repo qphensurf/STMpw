@@ -64,31 +64,31 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 
 3. You must create an input.STMpw file as follow:
 
-   **phi**   ! workfunction of the surface in eV 
-	   **n**   ! number of voltages to calculate
-	   **V1...Vn**   ! n values of tip-substrate voltages in V (tip to mass)
-	   **nZ**   ! sampling points in z (perpendicular to the surface)
-	   **Zmax**   ! maximum tip-surface distance (from 'Zsurf') in angstroms.
-	   **Zsurf**   ! origin of the surface in direct coordinates
-	   **z_s**   ! as explained above
-	   **Bardeen**    ! T for Bardeen and and F for Tersoff-Hamman
-	   **Ztip**   ! (only if Bardeen=T) origin of the tip in direct coordinates
-	   **dIdV**   ! T or F, whether we calculate the dIdV curve
-	   **emin emax**   ! (if dIdV=T) range of energy for dIdV
-	   **ndiv**   ! (if dIdV=T) number of divisions between emin and emax
-	   **Np** ! (if dIdV=T) number of points to plot the dIdV curve
-	   **x1, y1, z1** ! (if dIdV=T) coordinates of the first point
-	   ...
-	   **xNp, yNp, zNp** ! (if dIdV=T) coordinates of the nP point
-	   **name_POSCAR**   ! name of the POSCAR file
-	   **name_WAVECAR**   ! name of the WAVECAR file 
-	   **mapfile**   ! T to read a reciprocal vector and index file or F to generate it
-	   **name_mapfile**   ! (if mapfile=T) name of the reciprocal vector and index file
-	   **Gamma**   ! T or F, whether the k-point sampling contains the Gamma point or not.
-	   **wsxm**   ! T or F, WSxM output?
-	   **factor**   ! (if wsxm=T) multiplying factor for WSxM output files
-	   **gnuplot** ! T or F, plain output to use in gnuplot?
-	   **cube**   ! T or F, cube format output?
+   	   phi   ! workfunction of the surface in eV 
+	   n   ! number of voltages to calculate
+	   V1...Vn   ! n values of tip-substrate voltages in V (tip to mass)
+	   nZ   ! sampling points in z (perpendicular to the surface)
+	   Zmax   ! maximum tip-surface distance (from 'Zsurf') in angstroms.
+	   Zsurf   ! origin of the surface in direct coordinates
+	   z_s   ! as explained above
+	   Bardeen    ! T for Bardeen and and F for Tersoff-Hamman
+	   Ztip   ! (only if Bardeen=T) origin of the tip in direct coordinates
+	   dIdV   ! T or F, whether we calculate the dIdV curve
+	   emin emax   ! (if dIdV=T) range of energy for dIdV
+	   ndiv   ! (if dIdV=T) number of divisions between emin and emax
+	   Np ! (if dIdV=T) number of points to plot the dIdV curve
+	   x1, y1, z1 ! (if dIdV=T) coordinates of the first point
+	   .
+	   xNp, yNp, zNp ! (if dIdV=T) coordinates of the nP point
+	   name_POSCAR   ! name of the POSCAR file
+	   name_WAVECAR   ! name of the WAVECAR file 
+	   mapfile   ! T to read a reciprocal vector and index file or F to generate it
+	   name_mapfile   ! (if mapfile=T) name of the reciprocal vector and index file
+	   Gamma   ! T or F, whether the k-point sampling contains the Gamma point or not.
+	   wsxm   ! T or F, WSxM output?
+	   factor   ! (if wsxm=T) multiplying factor for WSxM output files
+	   gnuplot ! T or F, plain output to use in gnuplot?
+	   cube   ! T or F, cube format output?
 
 4. Different output files are produced. For each required voltage a directory with the name **V_voltage** is created. Inside different files are produced depending on the required output. 
 * **WSxM**: output for the [WSxM](http://www.wsxm.es/download.html) program. There is a TH_V_voltage.siesta file for *Tersoff-Hamann* and Bardeen_V_voltage.siesta and TH_tip_V_voltage.siesta files for *Bardeen*. They can be directly read by WsXM and processed using: Process -> Filter -> Create STM type image...
