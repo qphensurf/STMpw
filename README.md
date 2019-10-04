@@ -1,32 +1,32 @@
 ﻿# STMpw
 
-STMpw is a program to perform STM simulations in the *Tersoff-Hamman* and *Bardeen* approximations. It is a postprocessing utility for DFT planewave codes, but at the moment it is just interfaced with [VASP](https://www.vasp.at).
+STMpw is a program to perform STM simulations in the *Tersoff-Hamman* and *Bardeen* approximations. It is a postprocessing utility for DFT planewave codes. At the moment it is interfaced with [VASP](https://www.vasp.at).
 
 The program can perform:
 
-    a) Constant current and constant height STM images
+    a) Constant current and constant height STM topographic images
     b) dI/dV maps in constant current and constant height modes
     c) dI/dV curves
 
 ## Approximations
 
-* The program imposes that the wavefunctions exponentially decay in vacuum. So starting by a plane **z_s** located above the system of interest the wavefunctions from the DFT calculation are matched to an exponential function decaying into the vacuum.
+* The program imposes that the wavefunctions exponentially decay into vacuum. So starting by a plane **z_s** located above the system of interest the wavefunctions from the DFT calculation are matched to an exponential function decaying into vacuum.
 
 * Temperature is zero. The bias voltage effect will be much larger.
 
-* The energy-conservation delta's are replaced by Gaussians with a hardwired sigma of 0.25 eV.
+* The energy-conservation delta's are replaced by Gaussians with a hardwired *sigma* of 0.25 eV.
+
+* (*Bardeen*) The wavefunctions of the tip are also matched to exponential functions from a plane **z_t**.
 
 * (*Bardeen*) In order to make it very fast the main approximation is to calculate a tip in the same cell as the object under study.
 
 * (*Bardeen*) The program assumes the same workfunction for tip and sample. This approximation is not necessary, but makes life easier and our experience is that, in first approximation, it's more than fine.
 
-* (*Bardeen*) The wavefunctions of the tip are also matched to exponential functions from a plane **z_t**.
-
 ## Compilation
 
 The program is compiled using the included Makefile by typing *make* in the main directory. The program has been tested in linux with INTEL and GNU FORTRAN compilers. 
 
-It is require to provide a FFTW implementation. The performance of the program will dramatically depend on the performance of the FFTW library, so it is strongly recommended to use an optimized version for your system. MKL typically offers a good performance.
+It is required to provide a FFTW implementation. The performance of the program will dramatically depend on the performance of the FFTW library, so it is strongly recommended to use an optimized version for your system. MKL typically offers a good performance.
  
 The Makefile file must be adapted to your system by choosing a FORTRAN compiler and a FFTW library.
 
@@ -97,8 +97,8 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 
 	Some examples can be found in Utils.
 
-5. Different output files are produced. For each required voltage a directory with the name **V_voltage** is created. Inside different files are produced depending on the required output. 
-* **WSxM**: output for the [WSxM](http://www.wsxm.es/download.html) program. There is a TH_V_voltage.siesta file for *Tersoff-Hamann* and Bardeen_V_voltage.siesta and TH_tip_V_voltage.siesta files for *Bardeen*. They can be directly read by WsXM and processed using: Process -> Filter -> Create STM type image...
+5. Different output files are produced. For each required voltage a directory with the name **V_voltage** is created. Inside different files can be found depending on the required output. 
+* **WSxM**: output for the [WSxM](http://www.wsxm.es/download.html) program. There is a TH_V_voltage.siesta file for *Tersoff-Hamann* and Bardeen_V_voltage.siesta and TH_tip_V_voltage.siesta files for *Bardeen*. The last file is a STM simulation of the tip in the *Tersoff-Hamann* approximation. All these files can be directly read by WsXM and processed using: Process -> Filter -> Create STM type image...
 * **gnuplot**: .dat plain files. They can be plotted, for example, with gnuplot. In the Utils directory there are different programs and scripts to process them.
 * **cube**: files in the cube format. At the moment there are just for *Tersoff-Hamann*: TH_V_voltage.cube for STM images and dIdV_TH_V_voltage.cube for dIdV maps. cube is a standard format which can be read by many programs, including the last versions of WSxM.
 
