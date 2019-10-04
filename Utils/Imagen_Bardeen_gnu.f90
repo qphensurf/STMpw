@@ -150,22 +150,29 @@ program Imagen_gnu
 ! printing out results
 
        open (unit_topo, file = 'Topography.gnu')
-       x(ngx) = x(ngx-1)+x(1)
-       y(ngy) = y(ngy-1)+y(1)
-       zvalue(:,ngy)=zvalue(:,0)
-       zvalue(ngx,:)=zvalue(0,:)
-       zvalue(ngx,ngy)=zvalue(0,0)
        do ix = 1, nx
-        do jx= 0, ngx
+        do jx= 0, ngx-1
          do iy = 1, ny
-          do jy= 0, ngy
+          do jy= 0, ngy-1
            write (unit_topo, *) x(jx) + (ix-1)*(x(ngx-1)+x(1)), &
                                 y(jy) + (iy-1)*(y(ngy-1)+y(1)), zvalue (jx,jy)
           enddo
          enddo
+         write (unit_topo, *) x(jx) + (ix-1)*(x(ngx-1)+x(1)), &
+                              y(ngy-1) + (ny-1)*(y(ngy-1)+y(1))+y(1), zvalue (jx,0)
          write (unit_topo, *) 
         enddo
        enddo
+       do iy = 1, ny
+        do jy= 0, ngy-1
+         write (unit_topo, *) x(ngx-1) + (nx-1)*(x(ngx-1)+x(1))+x(1), &
+                              y(jy) + (iy-1)*(y(ngy-1)+y(1)), zvalue (0,jy)
+        enddo
+       enddo
+       write (unit_topo, *) x(ngx-1) + (nx-1)*(x(ngx-1)+x(1))+x(1), &
+                            y(ngy-1) + (ny-1)*(y(ngy-1)+y(1))+y(1), zvalue (0,0)
+
+
        close (unit_topo)
 
      stop
