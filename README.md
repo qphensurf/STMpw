@@ -10,7 +10,7 @@ The program can perform:
 
 ## Approximations
 
-* (*TH & Bardeen*) The program imposes that the wavefunctions exponentially decay into vacuum beyond a certain distance **z_s** into vacuum. So starting by a plane parallel to the surface at a distance **z_s** located above the system of interest each of the planewave components of the wavefunctions from the DFT calculation are matched to an exponential function decaying into vacuum. If the surface potential is already zero at **z_s** this procedure is exact.
+* (*TH & Bardeen*) The program imposes that the wavefunctions exponentially decay into vacuum beyond a certain distance **z_s** into vacuum. Starting by a plane parallel to the surface at a distance **z_s** located above the system of interest each of the planewave components of the wavefunctions from the DFT calculation are matched to an exponential function decaying into vacuum. If the surface potential is already zero at **z_s** this procedure is exact.
 
 * (*TH & Bardeen*) Temperature is zero. The bias voltage effect will be much larger.
 
