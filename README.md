@@ -74,7 +74,7 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 	   n   ! number of voltages to calculate
 	   V1...Vn   ! n values of tip-substrate voltages in V (tip to mass)
 	   nZ   ! sampling points in z (perpendicular to the surface)
-	   Zmax   ! maximum tip-surface distance (from 'Zsurf') in angstroms.
+	   Zmax   ! maximum tip-surface distance (from 'Zsurf') in angstroms
 	   Zsurf   ! origin of the surface in direct coordinates
 	   z_s   ! as explained above
 	   Bardeen    ! T for Bardeen and and F for Tersoff-Hamman
@@ -89,8 +89,9 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 	   name_POSCAR   ! name of the POSCAR file
 	   name_WAVECAR   ! name of the WAVECAR file 
 	   mapfile   ! T to read a reciprocal vector and index file or F to generate it
-	   name_mapfile   ! (mapfile=T) name of the reciprocal vector and index file; (mapfile=F) name of the OUTCAR file
-	   Gamma   ! T or F, whether the k-point sampling contains the Gamma point or not.
+	   name_mapfile   ! (if mapfile=T) name of the reciprocal vector and index file
+	   name_OUTCAR   ! (if mapfile=F) name of the OUTCAR file
+	   Gamma   ! T or F, whether the k-point sampling contains the Gamma point or not
 	   wsxm   ! T or F, WSxM output?
 	   factor   ! (if wsxm=T) multiplying factor for WSxM output files
 	   gnuplot ! T or F, plain output to use in gnuplot?
