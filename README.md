@@ -107,7 +107,7 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 	**Note**: distances are referred to both surfaces (sample and tip) but the sampling region is only between **z_s** and **z_t**, because it is the 'asymptotic' region where the electron potential is supposed to be constant ('zero'). The consequence is that the plotting isosurface values of the current (or LDOS) need to be smaller than a certain value to avoid **z** smaller than **z_s** when plotting the simulated STM images. You will realize that you need to reduce the isovalue when patches of your image are missing because **z** is too small.
 
 ## Examples
-Examples are included in the examples directory. There are intended just for testing: the different parameters are not converged.
+Examples are included in the Examples directory. There are intended just for testing: the different parameters are not converged.
 
 ## Authors
 Nicolás Lorente and Roberto Robles based on the Bardeen2 code of Nicolás Lorente.

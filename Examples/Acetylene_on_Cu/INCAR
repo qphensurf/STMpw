@@ -1,0 +1,28 @@
+SYSTEM= C2H2@Cu100
+
+ISYM = 0
+
+NPAR = 2
+
+LWAVE = T
+LCHARG = F
+
+PREC = accu
+ENCUT = 400.00
+ISMEAR = 0
+SIGMA = 0.01
+
+LREAL = Auto
+
+ISPIN  = 1
+
+ICHARG = 1 
+ 
+EDIFF = 1e-5
+EDIFFG = -0.02
+#NSW = 100
+#IBRION = 2
+NELMIN = 4
+POTIM = 0.15
+
+IVDW = 2

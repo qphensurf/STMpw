@@ -1,0 +1,75 @@
+Voltages to calculate (in V):   0.500 -0.500
+Tersoff-Hamman calculation
+We will generate MappingsCAR data from OUTCAR
+Vasp 5 format
+Selective dynamics
+Fractional coordinates
+Coord. max. =    0.45163
+z_s =   0.569105
+Generating MappingsCAR from OUTCAR:
+ NBANDS =     244
+ NKPTS =       5
+ NGX,Y,Z =    50    50   140
+ NSPIN = 1
+ ENCUT =  400.0
+ Reciprocal unit cell: 
+  0.132902318  0.000000000  0.000000000
+  0.000000000  0.132902318  0.000000000
+  0.000000000  0.000000000  0.046988065
+ K-points in reciprocal lattice:
+   0.00000000  0.00000000  0.00000000
+   0.33333333  0.00000000  0.00000000
+   0.00000000  0.33333333  0.00000000
+   0.33333333  0.33333333  0.00000000
+  -0.33333333  0.33333333  0.00000000
+Fermi energy at    0.0333 eV
+ Calculating spin  1 ...
+  Calculating kpoint    1 ...
+    Reading and matching wavefunctions ...
+     Time to read and match wavefunctions =      1.8 s
+       Time to read wavefunctions =      0.1 s
+       Time to match wavefunctions =      1.7 s
+    Computing current ...
+      Computing V =   0.500
+      Computing V =  -0.500
+    Time for current =      0.0 s
+  Calculating kpoint    2 ...
+    Reading and matching wavefunctions ...
+     Time to read and match wavefunctions =      1.8 s
+       Time to read wavefunctions =      0.1 s
+       Time to match wavefunctions =      1.7 s
+    Computing current ...
+      Computing V =   0.500
+      Computing V =  -0.500
+    Time for current =      0.0 s
+  Calculating kpoint    3 ...
+    Reading and matching wavefunctions ...
+     Time to read and match wavefunctions =      1.7 s
+       Time to read wavefunctions =      0.1 s
+       Time to match wavefunctions =      1.6 s
+    Computing current ...
+      Computing V =   0.500
+      Computing V =  -0.500
+    Time for current =      0.0 s
+  Calculating kpoint    4 ...
+    Reading and matching wavefunctions ...
+     Time to read and match wavefunctions =      1.8 s
+       Time to read wavefunctions =      0.1 s
+       Time to match wavefunctions =      1.6 s
+    Computing current ...
+      Computing V =   0.500
+      Computing V =  -0.500
+    Time for current =      0.0 s
+  Calculating kpoint    5 ...
+    Reading and matching wavefunctions ...
+     Time to read and match wavefunctions =      1.7 s
+       Time to read wavefunctions =      0.1 s
+       Time to match wavefunctions =      1.6 s
+    Computing current ...
+      Computing V =   0.500
+      Computing V =  -0.500
+    Time for current =      0.0 s
+ Writing files ...
+Output in WSxM format. Output will be multiplied by    1000.
+Output for gnuplot
+ Time to write files =      0.9 s

@@ -1,0 +1,18 @@
+5.10 ! phi in eV 
+2 ! number of voltages to calculate
+0.50 -0.50 ! tip-substrate voltage in V (tip to mass)
+50 ! sampling points in z (perpendicular to the surface)
+10 ! Zmax, maximum tip-surface distance (from 'Zsurf') in \AA
+0.33500 ! Zsurf, origin of the surface in direct coordinates
+-2.50 ! z_s, direct coordinates, exactly as in the CONTCAR (negative, Angs over max coord)
+F ! whether we use Bardeen aprox. or just Tersoff-Hamman
+F ! whether we calculate the dIdV curve
+POSCAR ! POSCAR file
+WAVECAR  ! wf file 
+F ! Do we read a mapfile?
+OUTCAR ! OUTCAR file
+T ! .true. or .false. whether the k-point sampling contains the Gamma point or not.
+T ! wsxm output?
+1000 !
+T ! gnuplot output?
+F ! cube output?
