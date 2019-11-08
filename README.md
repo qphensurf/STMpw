@@ -10,7 +10,7 @@ The program can perform:
 
 ## Approximations
 
-* (*TH & Bardeen*) The program imposes that the wavefunctions exponentially decay into vacuum beyond a certain distance **z_s** into vacuum. So starting by a plane parallel to the surface at a distance **z_s** located above the system of interest each fo the planewave components of the wavefunctions from the DFT calculation are matched to an exponential function decaying into vacuum. If the surface potential is already zero at **z_s** this procedure is exact.
+* (*TH & Bardeen*) The program imposes that the wavefunctions exponentially decay into vacuum beyond a certain distance **z_s** into vacuum. So starting by a plane parallel to the surface at a distance **z_s** located above the system of interest each of the planewave components of the wavefunctions from the DFT calculation are matched to an exponential function decaying into vacuum. If the surface potential is already zero at **z_s** this procedure is exact.
 
 * (*TH & Bardeen*) Temperature is zero. The bias voltage effect will be much larger.
 
@@ -52,7 +52,7 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
         s: substrate atoms
         m: molecule atoms
 
-	Therefore the molecule must be above the surface and (for Bardeen) the tip must be above the molecule. While the surface unit cel can have any shape, the vertical axis must be perpendicular to the surface, in the following all distances along this axis are called **z**.
+	Therefore the molecule must be above the surface and (for Bardeen) the tip must be above the molecule. While the surface unit cell can have any shape, the vertical axis must be perpendicular to the surface, in the following all distances along this axis are called **z**.
 
 * VASP must be run in the **standard** version (the gamma version is not supported at this moment, if you run gamma-only calculations you can just rerun with the standard vasp version including NELM=0 in the INCAR file, this quickly produces a good input for the code).
 * The use of symmetry in VASP is not allowed: SYM=0 **must** be included in the INCAR file.
@@ -60,7 +60,7 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 
 	Once the VASP has converged POSCAR, OUTCAR and WAVECAR must be kept and supplied to STMpw. 
 
-2. You must determine the plane **z_s** from which the wavefunctions will be substituted by exponential functions. First, you have to look for the last surface layer to be used as reference (**Zsurf**). Then you look at the density vs density behavior to look for the first point where there is an exponential decay. The z value of this point in direct coordinates will be **z_s**. Typically this point is around 2-3 angstroms above the most protruding atom of the molecule. So to speed things up a negative value of **z_s** indicates a distance in angstroms above the most protruding atom (the code will look for the most protruding atom). In addition, if you are using the Bardeen approach the origin of the tip **Ztip** must be supplied. **z_t** is hardwired to 2 angstroms below the most (least?) protruding atom of the tip. At the end you should have **Zsurf < z_s < z_t < Ztip**.
+2. You must determine the plane **z_s** from which the wavefunction Fourier components will be substituted by exponential functions of **z**. First, you have to look for the last surface layer to be used as reference (**Zsurf**). Then you look at the density vs density behavior to look for the first point where there is an exponential decay. The z value of this point in direct coordinates will be **z_s**. Typically this point is around 2-3 angstroms above the most protruding atom of the molecule. So to speed things up a negative value of **z_s** indicates a distance in angstroms above the most protruding atom (the code will look for the most protruding atom). In addition, if you are using the Bardeen approach the origin of the tip **Ztip** must be supplied. **z_t** is hardwired to 2 angstroms below the most (least?) protruding atom of the tip. At the end you should have **Zsurf < z_s < z_t < Ztip**.
 
 3. For the calculation of dI/dV curves you must determine 
 * The range of energies (or bias value) to use (referred to Fermi energy = 0 eV). 
