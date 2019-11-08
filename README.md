@@ -102,7 +102,7 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 * **gnuplot**: .dat plain files. They can be plotted, for example, with gnuplot. In the Utils directory there are different programs and scripts to process them.
 * **cube**: files in the cube format. At the moment there are just for *Tersoff-Hamann*: TH_V_voltage.cube for STM images and dIdV_TH_V_voltage.cube for dIdV maps. cube is a standard format which can be read by many programs, including the last versions of WSxM.
 
-	**Note**: distances are referred to both surfaces (sample and tip) but the sampling region is only between **z_s** and **z_t**, because it is the 'asymptotic' region.
+	**Note**: distances are referred to both surfaces (sample and tip) but the sampling region is only between **z_s** and **z_t**, because it is the 'asymptotic' region where the electron potential is supposed to be constant ('zero').
 
 ## Authors
 Nicolás Lorente and Roberto Robles based on the Bardeen2 code of Nicolás Lorente.
