@@ -54,7 +54,7 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 
 	Therefore the molecule must be above the surface and (for Bardeen) the tip must be above the molecule. While the surface unit cel can have any shape, the vertical axis must be perpendicular to the surface, in the following all distances along this axis are called **z**.
 
-* VASP must be run in the **standard** version (the gamma version is not supported at this moment, if you run gamma-only calculations you can just rerun with the standard vasp version including NEM=0 in the INCAR file, this quickly produces a good input for the code).
+* VASP must be run in the **standard** version (the gamma version is not supported at this moment, if you run gamma-only calculations you can just rerun with the standard vasp version including NELM=0 in the INCAR file, this quickly produces a good input for the code).
 * The use of symmetry in VASP is not allowed: SYM=0 **must** be included in the INCAR file.
 * The calculation must be carefully converged in k-points, especially for dI/dV maps and curves.
 
