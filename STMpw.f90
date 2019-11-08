@@ -69,6 +69,7 @@ program STMpw
       read (8,*, IOSTAT=ios, ERR=100,END=200) NameMAP
       write(*,'(3A)') "We will use '",trim(adjustl(NameMAP)),"' as MappingsCAR file"       
      else
+      read (8,*, IOSTAT=ios, ERR=100,END=200) NameOUTCAR
       write(*,'(A)') "We will generate MappingsCAR data from OUTCAR" 
      endif
      read (8,*, IOSTAT=ios, ERR=100,END=200) LGAMMA !.true. or .false.
@@ -190,7 +191,7 @@ program STMpw
 ! Reciprocal vector and wave index file
    
       if(.not.MAPfile) then
-       call mappings_from_outcar(ENMAXW, ONPL, oerror)
+       call mappings_from_outcar(NameOUTCAR,ENMAXW, ONPL, oerror)
        if(oerror.gt.0) then
          write(*,'(A)') "Generation of OUTCAR failed"
          stop

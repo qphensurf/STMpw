@@ -7,7 +7,7 @@
               
       contains        
 
-      subroutine mappings_from_outcar(enmaxw, onpl, oerror)
+      subroutine mappings_from_outcar(NameOUTCAR,enmaxw, onpl, oerror)
               
       implicit none        
 
@@ -28,18 +28,20 @@
       logical :: present, cell = .false., lfermi = .false.
       logical :: lngx = .false.
 
+      character ( len = 99) :: NameOUTCAR
+
 ! extract parameters from OUTCAR
 
       write(*,'(A)') "Generating MappingsCAR from OUTCAR:"
 
-      inquire(file="OUTCAR", exist=present)
+      inquire(file=NameOUTCAR, exist=present)
       if(.NOT.present) then
-       write(*,'(A)') 'OUTCAR is not present'
+       write(*,'(2A)') NameOUTCAR,' is not present'
        oerror = 1
        return
       endif
 
-      open(29, file="OUTCAR")
+      open(29, file=NameOUTCAR)
 
       do
        read(29,'(A)', iostat = status) line

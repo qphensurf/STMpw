@@ -89,7 +89,7 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 	   name_POSCAR   ! name of the POSCAR file
 	   name_WAVECAR   ! name of the WAVECAR file 
 	   mapfile   ! T to read a reciprocal vector and index file or F to generate it
-	   name_mapfile   ! (if mapfile=T) name of the reciprocal vector and index file
+	   name_mapfile   ! (mapfile=T) name of the reciprocal vector and index file; (mapfile=F) name of the OUTCAR file
 	   Gamma   ! T or F, whether the k-point sampling contains the Gamma point or not.
 	   wsxm   ! T or F, WSxM output?
 	   factor   ! (if wsxm=T) multiplying factor for WSxM output files
@@ -104,6 +104,9 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 * **cube**: files in the cube format. At the moment there are just for *Tersoff-Hamann*: TH_V_voltage.cube for STM images and dIdV_TH_V_voltage.cube for dIdV maps. cube is a standard format which can be read by many programs, including the last versions of WSxM.
 
 	**Note**: distances are referred to both surfaces (sample and tip) but the sampling region is only between **z_s** and **z_t**, because it is the 'asymptotic' region where the electron potential is supposed to be constant ('zero'). The consequence is that the plotting isosurface values of the current (or LDOS) need to be smaller than a certain value to avoid **z** smaller than **z_s** when plotting the simulated STM images. You will realize that you need to reduce the isovalue when patches of your image are missing because **z** is too small.
+
+## Examples
+Examples are included in the examples directory. There are intended just for testing: the different parameters are not converged.
 
 ## Authors
 Nicolás Lorente and Roberto Robles based on the Bardeen2 code of Nicolás Lorente.

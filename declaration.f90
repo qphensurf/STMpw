@@ -57,7 +57,7 @@
   LOGICAL :: wsxm = .false., dat = .false., cube = .false.
 
 ! characters
- character ( len = 99) :: NameWF,NameMAP,NamePOSCAR,name_file,cmd
+ character ( len = 99) :: NameWF,NameMAP,NamePOSCAR,NameOUTCAR,name_file,cmd
  character ( len = 6) :: volt,cnpt
 
 

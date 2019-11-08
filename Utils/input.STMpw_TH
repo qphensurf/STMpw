@@ -10,6 +10,7 @@ F ! whether we calculate the dIdV curve
 POSCAR ! POSCAR file
 WAVECAR  ! wf file 
 F ! Do we read a mapfile?
+OUTCAR ! OUTCAR file
 T ! .true. or .false. whether the k-point sampling contains the Gamma point or not.
 T ! WSxM output?
 1000 ! multiplying factor for WSxM
