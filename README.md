@@ -1,6 +1,6 @@
 ﻿# STMpw
 
-STMpw is a program to perform STM simulations in the *Tersoff-Hamman* and *Bardeen* approximations. It is a postprocessing utility for DFT planewave codes. At the moment it is interfaced with [VASP](https://www.vasp.at).
+STMpw is a program to perform STM constant current and dI/dV map simulations in the *Tersoff-Hamann* and *Bardeen* approximations. It is a postprocessing utility for DFT planewave codes. At the moment it is interfaced with [VASP](https://www.vasp.at).
 
 The program can perform:
 
@@ -10,15 +10,15 @@ The program can perform:
 
 ## Approximations
 
-* The program imposes that the wavefunctions exponentially decay into vacuum. So starting by a plane **z_s** located above the system of interest the wavefunctions from the DFT calculation are matched to an exponential function decaying into vacuum.
+* (*TH & Bardeen*) The program imposes that the wavefunctions exponentially decay into vacuum beyond a certain distance **z_s** into vacuum. So starting by a plane parallel to the surface at a distance **z_s** located above the system of interest each fo the planewave components of the wavefunctions from the DFT calculation are matched to an exponential function decaying into vacuum. If the surface potential is already zero at **z_s** this procedure is exact.
 
-* Temperature is zero. The bias voltage effect will be much larger.
+* (*TH & Bardeen*) Temperature is zero. The bias voltage effect will be much larger.
 
-* The energy-conservation delta's are replaced by Gaussians with a hardwired *sigma* of 0.25 eV.
+* (*Bardeen*) The energy-conservation delta's are replaced by Gaussians with a hardwired *sigma* of 0.25 eV.
 
 * (*Bardeen*) The wavefunctions of the tip are also matched to exponential functions from a plane **z_t**.
 
-* (*Bardeen*) In order to make it very fast the main approximation is to calculate a tip in the same cell as the object under study.
+* (*Bardeen*) In order to make it very fast, the main approximation is to calculate a tip in the same cell as the object under study.
 
 * (*Bardeen*) The program assumes the same workfunction for tip and sample. This approximation is not necessary, but makes life easier and our experience is that, in first approximation, it's more than fine.
 
@@ -52,22 +52,22 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
         s: substrate atoms
         m: molecule atoms
 
-	Therefore the molecule must be above the surface and (for Bardeen) the tip must be above the molecule.
+	Therefore the molecule must be above the surface and (for Bardeen) the tip must be above the molecule. While the surface unit cel can have any shape, the vertical axis must be perpendicular to the surface, in the following all distances along this axis are called **z**.
 
-* VASP must be run in the **standard** version (the gamma version is not supported at this moment).
+* VASP must be run in the **standard** version (the gamma version is not supported at this moment, if you run gamma-only calculations you can just rerun with the standard vasp version including NEM=0 in the INCAR file, this quickly produces a good input for the code).
 * The use of symmetry in VASP is not allowed: SYM=0 **must** be included in the INCAR file.
 * The calculation must be carefully converged in k-points, especially for dI/dV maps and curves.
 
 	Once the VASP has converged POSCAR, OUTCAR and WAVECAR must be kept and supplied to STMpw. 
 
-2. You must determine the plane **z_s** from which the wavefunctions will be substituted by exponential functions. First you have to look for the last surface layer to be used as reference (**Zsurf**). Then you look at the density vs density behavior to look for the first point where there is an exponential decay. The z value of this point in direct coordinates will be **z_s**. Typically this point is around 2-3 angstroms above the most protruding atom of the molecule. So to speed things up a negative value of **z_s** indicates a distance in angstroms above the most protruding atom. In addition, if you are using the Bardeen approach the origin of the tip **Ztip** must be supplied. **z_t** is hardwired to 2 angstroms below the most protruding atom of the tip. At the end you should have **Zsurf < z_s < z_t < Ztip**.
+2. You must determine the plane **z_s** from which the wavefunctions will be substituted by exponential functions. First, you have to look for the last surface layer to be used as reference (**Zsurf**). Then you look at the density vs density behavior to look for the first point where there is an exponential decay. The z value of this point in direct coordinates will be **z_s**. Typically this point is around 2-3 angstroms above the most protruding atom of the molecule. So to speed things up a negative value of **z_s** indicates a distance in angstroms above the most protruding atom (the code will look for the most protruding atom). In addition, if you are using the Bardeen approach the origin of the tip **Ztip** must be supplied. **z_t** is hardwired to 2 angstroms below the most (least?) protruding atom of the tip. At the end you should have **Zsurf < z_s < z_t < Ztip**.
 
 3. For the calculation of dI/dV curves you must determine 
-* The range of energies to use (refered to Fermi energy = 0 eV). 
-* The number of divisions on that range
-* In which points the curves will be determined. Tipically we select the *x* and *y* coordinates of one atom (in angstroms) and a *z* value several angstroms over the *z* of the atom.
+* The range of energies (or bias value) to use (referred to Fermi energy = 0 eV). 
+* The number of divisions (or total number of bias values)  on that range
+* On which points the curves will be determined. Tipically we select the *x* and *y* coordinates of one atom (in angstroms) and a *z* value several angstroms over the *z* of the atom.
 
-4. You must create an input.STMpw file as follows:
+4. You must create an input.STMpw file as follows (where ! means that a comment follows, before ! you have to write a value for the marked variable. Please start from the first line of the file.):
 
    	   phi   ! workfunction of the surface in eV 
 	   n   ! number of voltages to calculate
@@ -97,15 +97,15 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 
 	Some examples can be found in Utils.
 
-5. Different output files are produced. For each required voltage a directory with the name **V_voltage** is created. Inside different files can be found depending on the required output. 
-* **WSxM**: output for the [WSxM](http://www.wsxm.es/download.html) program. There is a TH_V_voltage.siesta file for *Tersoff-Hamann* and Bardeen_V_voltage.siesta and TH_tip_V_voltage.siesta files for *Bardeen*. The last file is a STM simulation of the tip in the *Tersoff-Hamann* approximation. All these files can be directly read by WsXM and processed using: Process -> Filter -> Create STM type image...
+5. Different output files are produced. For each required voltage a directory with the name **V_voltage** is created. Inside each directory, different files can be found depending on the required output. 
+* **WSxM**: output for the [WSxM](http://www.wsxm.es/download.html) program. There is a TH_V_voltage.siesta file for *Tersoff-Hamann* and Bardeen_V_voltage.siesta and TH_tip_V_voltage.siesta files for *Bardeen*. The last file is a STM simulation of the tip in the *Tersoff-Hamann* approximation. All these files can be directly read by WsXM (choose the *.* format for reading it in WSxM) and processed using: Process -> Filter -> Create STM type image...
 * **gnuplot**: .dat plain files. They can be plotted, for example, with gnuplot. In the Utils directory there are different programs and scripts to process them.
 * **cube**: files in the cube format. At the moment there are just for *Tersoff-Hamann*: TH_V_voltage.cube for STM images and dIdV_TH_V_voltage.cube for dIdV maps. cube is a standard format which can be read by many programs, including the last versions of WSxM.
 
 	**Note**: distances are referred to both surfaces (sample and tip) but the sampling region is only between **z_s** and **z_t**, because it is the 'asymptotic' region.
 
 ## Authors
-Nicolás Lorente and Roberto Robles based in the Bardeen2 code of Nicolás Lorente.
+Nicolás Lorente and Roberto Robles based on the Bardeen2 code of Nicolás Lorente.
 
 ## License
 GNU General Public License v3.0
