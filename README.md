@@ -13,6 +13,7 @@ The program can perform:
 * (*TH & Bardeen*) The program imposes that the wavefunctions exponentially decay into vacuum beyond a certain distance **z_s** into vacuum. Starting by a plane parallel to the surface at a distance **z_s** located above the system of interest each of the planewave components of the wavefunctions from the DFT calculation are matched to an exponential function decaying into vacuum. If the surface potential is already zero at **z_s** this procedure is exact.
 
 * (*TH & Bardeen*) Temperature is zero. The bias voltage effect will be much larger.
+* (*TH*) The TH picture is a *finite-bias* TH approximation where the electronic states are integrated between the Fermi energy and the Fermi energy plus the applied bias. This avoids to use an approximation for the delta function appearing in the local density of states (LDOS) and approximately takes into account the effect of the bias.
 
 * (*Bardeen*) The energy-conservation delta's are replaced by Gaussians with a hardwired *sigma* of 0.25 eV.
 
@@ -102,7 +103,7 @@ The Makefile file must be adapted to your system by choosing a FORTRAN compiler 
 * **gnuplot**: .dat plain files. They can be plotted, for example, with gnuplot. In the Utils directory there are different programs and scripts to process them.
 * **cube**: files in the cube format. At the moment there are just for *Tersoff-Hamann*: TH_V_voltage.cube for STM images and dIdV_TH_V_voltage.cube for dIdV maps. cube is a standard format which can be read by many programs, including the last versions of WSxM.
 
-	**Note**: distances are referred to both surfaces (sample and tip) but the sampling region is only between **z_s** and **z_t**, because it is the 'asymptotic' region where the electron potential is supposed to be constant ('zero').
+	**Note**: distances are referred to both surfaces (sample and tip) but the sampling region is only between **z_s** and **z_t**, because it is the 'asymptotic' region where the electron potential is supposed to be constant ('zero'). The consequence is that the plotting isosurface values of the current (or LDOS) need to be smaller than a certain value to avoid **z** smaller than **z_s** when plotting the simulated STM images. You will realize that you need to reduce the isovalue when patches of your image are missing because **z** is too small.
 
 ## Authors
 Nicolás Lorente and Roberto Robles based on the Bardeen2 code of Nicolás Lorente.
