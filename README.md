@@ -1,6 +1,6 @@
 ﻿# STMpw
 
-STMpw is a program to perform STM constant current and dI/dV map simulations in the *Tersoff-Hamann* and *Bardeen* approximations. It is a postprocessing utility for DFT planewave codes. At the moment it is interfaced with [VASP](https://www.vasp.at).
+STMpw is a program created by the [**Quantum Phenomena on Surfaces**](https://www.quantumsurface.tk) group to perform STM constant current and dI/dV map simulations in the *Tersoff-Hamann* and *Bardeen* approximations. It is a postprocessing utility for DFT planewave codes. At the moment it is interfaced with [VASP](https://www.vasp.at).
 
 The program can perform:
 
