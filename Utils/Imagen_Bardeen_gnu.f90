@@ -110,7 +110,7 @@ program Imagen_gnu
 
 ! Shift to middle of the cell
        var = 0
-       print *, ' Type (1) if you want ot shift the cell='
+       print *, ' Type (1) if you want to shift the cell='
        read (*,*) var  
 
        if (var == 1) then
