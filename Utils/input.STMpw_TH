@@ -14,5 +14,5 @@ OUTCAR ! OUTCAR file
 T ! .true. or .false. whether the k-point sampling contains the Gamma point or not.
 T ! WSxM output?
 1000 ! multiplying factor for WSxM
-F ! gnuplot output?
+T ! gnuplot output?
 F ! cube output?

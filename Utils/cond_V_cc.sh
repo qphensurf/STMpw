@@ -37,7 +37,7 @@ Cond_gnu.out < cond.dat
 cat > stm.gnu << !
 set pm3d map
 set size ratio -1
-set term png
+set term pngcairo
 set output "Conductance_${j}_${i}.png"
 
 ex_x=$a1_x; ex_y=$a1_y

@@ -46,7 +46,7 @@ Imagen_Bardeen_gnu.out < topo.gnu
 cat > stm.gnu << !
 set pm3d map
 set size ratio -1
-set term png
+set term pngcairo
 set output "${name}_${j}_${i}.png"
 
 ex_x=$a1_x; ex_y=$a1_y
