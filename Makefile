@@ -9,7 +9,7 @@ FLAGS =  -O -assume byterecl
 
 # It must be linked with a fftw implementation, crutial for performance
 #LINK = /usr/lib/x86_64-linux-gnu/libfftw3.so.3
-#LINK =  /gpfs/home/robles/lib/libfftw3.so.3 
+
 LINK = -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_lp64.a ${MKLROOT}/lib/intel64/libmkl_sequential.a ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -lpthread -lm -ldl
 
 OBJ = declaration.o declfft.o determinequantities.o  \
