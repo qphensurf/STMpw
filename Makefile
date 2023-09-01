@@ -17,7 +17,7 @@ OBJ = declaration.o declfft.o determinequantities.o  \
 	norm_name.o mappingscar_gen.o  \
 	STMpw.o  
 
-STMpw.out: $(OBJ)
+STMpw_spin.out: $(OBJ)
 	$(FC) $(FLAGS) $(OBJ) $(LINK) -o STMpw.out
 
 utils: Imagen_Bardeen_gnu.out Cond_gnu.out
