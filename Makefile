@@ -18,7 +18,7 @@ OBJ = declaration.o declfft.o determinequantities.o  \
 	STMpw.o  
 
 STMpw_spin.out: $(OBJ)
-	$(FC) $(FLAGS) $(OBJ) $(LINK) -o STMpw.out
+	$(FC) $(FLAGS) $(OBJ) $(LINK) -o STMpw_spin.out
 
 utils: Imagen_Bardeen_gnu.out Cond_gnu.out
 
