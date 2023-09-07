@@ -11,7 +11,6 @@ program STMpw
   use mappingscar_gen
   implicit none
 
-
 ! test if input.STMpw exists, if not stop
      inquire (file = 'input.STMpw', exist = fichero)
      if (fichero) then
@@ -138,8 +137,12 @@ program STMpw
 ! output current units Tersoff-Hamman
       unitTH = 11
       unitTHdat = 21
+      unitTHdat_sp = 31
+      unitTHdat_spp = 41
 ! output conductance unit TH
       unitdITHdat = 20
+      unitdITHdat_sp = 30
+      unitdITHdat_spp = 40
 ! output current units Tersoff-Hamman for the TIP
       unitTIP =12
       unitTIPdat =22
@@ -320,7 +323,9 @@ program STMpw
        Tersoff_t =  0
      endif
      Tersoff_c =  0
+     if(NSPIN.eq.2) Tersoff_c_dw = 0
      Tersoff_s =  0
+     if(NSPIN.eq.2) Tersoff_s_dw = 0
      if(LDIDV) Tersoff_s2 = 0
 
 !     density_z = 0
@@ -561,29 +566,53 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
    call matrix_TH (A_S,C_T,ngx,ngy,phi,gx,gy,z,TH_t,TH_s)
 
       if (.not.LGAMMA) then
-         Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + TH_s (:,:)/vol/ &
+         if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
+       & (Number_of_KPOINTS)
+         if(spin1.eq.1) then
+           Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + TH_s (:,:)/vol/ &
+       & (Number_of_KPOINTS)
+           Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (Number_of_KPOINTS) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
        & * constant_I 
-         if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
+         elseif(spin1.eq.2) then
+           Tersoff_s_dw(:,:,iz,jv) =  Tersoff_s_dw(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (Number_of_KPOINTS)
-         Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + TH_s (:,:)/vol/ &
-       & (Number_of_KPOINTS)
+           Tersoff_c_dw(:,:,iz,jv) =  Tersoff_c_dw(:,:,iz,jv) + TH_s (:,:)/vol/ &
+       & (Number_of_KPOINTS) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
+       & * constant_I 
+         endif          
       elseif (kp == 1) then
-         Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + TH_s (:,:)/vol/ &
-       & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
-       & * constant_I 
          if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
-         Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + TH_s (:,:)/vol/ &
+         if(spin1.eq.1) then
+           Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
-      else
-         Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
+           Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
        & * constant_I 
+         elseif(spin1.eq.2) then
+           Tersoff_s_dw(:,:,iz,jv) =  Tersoff_s_dw(:,:,iz,jv) + TH_s (:,:)/vol/ &
+       & (2*Number_of_KPOINTS-1)
+           Tersoff_c_dw(:,:,iz,jv) =  Tersoff_c_dw(:,:,iz,jv) + TH_s (:,:)/vol/ &
+       & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
+       & * constant_I 
+         endif
+      else
          if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + 2.0*TH_t (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
-         Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
+         if(spin1.eq.1) then
+           Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
+           Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
+       & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
+       & * constant_I 
+         elseif(spin1.eq.2) then
+           Tersoff_s_dw(:,:,iz,jv) =  Tersoff_s_dw(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
+       & (2*Number_of_KPOINTS-1)
+           Tersoff_c_dw(:,:,iz,jv) =  Tersoff_c_dw(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
+       & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
+       & * constant_I 
+         endif
       end if
 
         endif
@@ -598,29 +627,53 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
    call matrix_TH (A_S,C_T,ngx,ngy,phi,gx,gy,z,TH_t,TH_s)
 
       if (.not.LGAMMA) then
-         Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + TH_s (:,:)/vol/ &
+         if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
+       & (Number_of_KPOINTS)
+         if(spin1.eq.1) then
+           Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + TH_s (:,:)/vol/ &
+       & (Number_of_KPOINTS)
+           Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (Number_of_KPOINTS) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
        & * constant_I
-         if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
+         elseif(spin1.eq.2) then
+           Tersoff_s_dw(:,:,iz,jv) =  Tersoff_s_dw(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (Number_of_KPOINTS)
-         Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + TH_s (:,:)/vol/ &
-       & (Number_of_KPOINTS)
+           Tersoff_c_dw(:,:,iz,jv) =  Tersoff_c_dw(:,:,iz,jv) + TH_s (:,:)/vol/ &
+       & (Number_of_KPOINTS) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
+       & * constant_I
+         endif
       elseif (kp == 1) then
-         Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + TH_s (:,:)/vol/ &
-       & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
-       & * constant_I
          if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + TH_t (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
-         Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + TH_s (:,:)/vol/ &
+         if(spin1.eq.1) then
+           Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
-      else
-         Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
+           Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
        & * constant_I
+         elseif(spin1.eq.2) then
+           Tersoff_s_dw(:,:,iz,jv) =  Tersoff_s_dw(:,:,iz,jv) + TH_s (:,:)/vol/ &
+       & (2*Number_of_KPOINTS-1)
+           Tersoff_c_dw(:,:,iz,jv) =  Tersoff_c_dw(:,:,iz,jv) + TH_s (:,:)/vol/ &
+       & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
+       & * constant_I
+         endif
+      else
          if(Bardeen) Tersoff_t(:,:,iz,jv) =  Tersoff_t(:,:,iz,jv) + 2.0*TH_t (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
-         Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
+         if(spin1.eq.1) then
+           Tersoff_s(:,:,iz,jv) =  Tersoff_s(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
        & (2*Number_of_KPOINTS-1)
+           Tersoff_c(:,:,iz,jv) =  Tersoff_c(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
+       & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
+       & * constant_I
+         elseif(spin1.eq.2) then
+           Tersoff_s_dw(:,:,iz,jv) =  Tersoff_s_dw(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
+       & (2*Number_of_KPOINTS-1)
+           Tersoff_c_dw(:,:,iz,jv) =  Tersoff_c_dw(:,:,iz,jv) + 2.0*TH_s (:,:)/vol/ &
+       & (2*Number_of_KPOINTS-1) * exp (-((dreal(EIG(tband)-V(jv))/sigma)**2))&
+       & * constant_I
+         endif
       end if
 
           endif
@@ -864,24 +917,59 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
           if (Bardeen) open (unitIdat,file=name_file)
           name_file = 'V_'//trim(adjustl(volt))//'/TH.dat'
           open (unitTHdat,file=name_file)
+          name_file = 'V_'//trim(adjustl(volt))//'/TH_sp.dat'
+          if (write_spin.AND.NSPIN.eq.2) open (unitTHdat_sp,file=name_file)
+          name_file = 'V_'//trim(adjustl(volt))//'/TH_spp.dat'
+          if (write_spin.AND.NSPIN.eq.2) open (unitTHdat_spp,file=name_file)
           name_file = 'V_'//trim(adjustl(volt))//'/TH_tip.dat'
           if (Bardeen) open (unitTIPdat,file=name_file)
           name_file = 'V_'//trim(adjustl(volt))//'/dIdV_TH.dat'
           open (unitdITHdat,file=name_file)
+          name_file = 'V_'//trim(adjustl(volt))//'/dIdV_TH_sp.dat'
+          if (write_spin.AND.NSPIN.eq.2) open (unitdITHdat_sp,file=name_file)
+          name_file = 'V_'//trim(adjustl(volt))//'/dIdV_TH_spp.dat'
+          if (write_spin.AND.NSPIN.eq.2) open (unitdITHdat_spp,file=name_file)
           name_file = 'V_'//trim(adjustl(volt))//'/dIdV_Bardeen.dat'
           if (Bardeen) open (unitdIdat,file=name_file)
-          write(unitdITHdat,*) N_sampling_z, ngy, ngx
           write(unitTHdat,*) N_sampling_z, ngy, ngx
+          if (write_spin.AND.NSPIN.eq.2) write(unitTHdat_sp,*) N_sampling_z, ngy, ngx
+          if (write_spin.AND.NSPIN.eq.2) write(unitTHdat_spp,*) N_sampling_z, ngy, ngx
+          write(unitdITHdat,*) N_sampling_z, ngy, ngx
+          if (write_spin.AND.NSPIN.eq.2) write(unitdITHdat_sp,*) N_sampling_z, ngy, ngx
+          if (write_spin.AND.NSPIN.eq.2) write(unitdITHdat_spp,*) N_sampling_z, ngy, ngx
           if (Bardeen) write(unitTIPdat,*) N_sampling_z, ngy, ngx
           if (Bardeen) write(unitIdat,*) N_sampling_z, ngy, ngx
           if (Bardeen) write(unitdIdat,*) N_sampling_z, ngy, ngx
           do iz= 1, N_sampling_z
            do iy = 0, ngy-1
             do ix = 0, ngx-1
-             write (unitdITHdat,'(4g14.4)') &
-               bohr*(Zmin+stepZ*(iz-1)),bohr*(iy)*stepY, bohr*(ix)*stepX, Tersoff_c(ix,iy,iz,jv)
-             write (unitTHdat,'(4g14.4)') &
-               bohr*(Zmin+stepZ*(iz-1)),bohr*(iy)*stepY, bohr*(ix)*stepX, Tersoff_s(ix,iy,iz,jv)
+             if(NSPIN.eq.1) then
+               write (unitTHdat,'(4g14.4)') &
+                 bohr*(Zmin+stepZ*(iz-1)),bohr*(iy)*stepY, bohr*(ix)*stepX, Tersoff_s(ix,iy,iz,jv)
+               write (unitdITHdat,'(4g14.4)') &
+                 bohr*(Zmin+stepZ*(iz-1)),bohr*(iy)*stepY, bohr*(ix)*stepX, Tersoff_c(ix,iy,iz,jv)
+             elseif(write_spin.AND.NSPIN.eq.2) then
+               write (unitTHdat,'(4g14.4)') &
+                 bohr*(Zmin+stepZ*(iz-1)),bohr*(iy)*stepY, bohr*(ix)*stepX, &
+                  Tersoff_s(ix,iy,iz,jv)+Tersoff_s_dw(ix,iy,iz,jv)
+               write (unitTHdat_sp,'(4g14.4)') &
+                 bohr*(Zmin+stepZ*(iz-1)),bohr*(iy)*stepY, bohr*(ix)*stepX, &
+                  Tersoff_s(ix,iy,iz,jv)-Tersoff_s_dw(ix,iy,iz,jv)
+               write (unitTHdat_spp,'(4g14.4)') &
+                 bohr*(Zmin+stepZ*(iz-1)),bohr*(iy)*stepY, bohr*(ix)*stepX, &
+                  (Tersoff_s(ix,iy,iz,jv)-Tersoff_s_dw(ix,iy,iz,jv))/ &
+                  (Tersoff_s(ix,iy,iz,jv)+Tersoff_s_dw(ix,iy,iz,jv))
+               write (unitdITHdat,'(4g14.4)') &
+                 bohr*(Zmin+stepZ*(iz-1)),bohr*(iy)*stepY, bohr*(ix)*stepX, &
+                  Tersoff_c(ix,iy,iz,jv)+Tersoff_c_dw(ix,iy,iz,jv)
+               write (unitdITHdat_sp,'(4g14.4)') &
+                 bohr*(Zmin+stepZ*(iz-1)),bohr*(iy)*stepY, bohr*(ix)*stepX, &
+                  Tersoff_c(ix,iy,iz,jv)-Tersoff_c_dw(ix,iy,iz,jv)
+               write (unitdITHdat_spp,'(4g14.4)') &
+                 bohr*(Zmin+stepZ*(iz-1)),bohr*(iy)*stepY, bohr*(ix)*stepX, &
+                  (Tersoff_c(ix,iy,iz,jv)-Tersoff_c_dw(ix,iy,iz,jv))/ &
+                  (Tersoff_c(ix,iy,iz,jv)+Tersoff_c_dw(ix,iy,iz,jv))
+             endif
              if (Bardeen) write (unitTIPdat,'(4g14.4)') &
                bohr*(Zmin+stepZ*(iz-1)), bohr*(iy)*stepY, bohr*(ix)*stepX, Tersoff_t(ix,iy,iz,jv) 
              if (Bardeen) write (unitIdat,'(4g14.4)') &
@@ -893,10 +981,14 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
           enddo
 
           close(unitTHdat)
+          if(write_spin.AND.NSPIN.eq.2) close(unitTHdat_sp)
+          if(write_spin.AND.NSPIN.eq.2) close(unitTHdat_spp)
           if (Bardeen) close(unitTIPdat)
           if (Bardeen) close(unitIdat)
           if (Bardeen) close(unitdIdat)
           close(unitdITHdat)
+          if(write_spin.AND.NSPIN.eq.2) close(unitdITHdat_sp)
+          if(write_spin.AND.NSPIN.eq.2) close(unitdITHdat_spp)
         endif
 
         if (cube) then
@@ -1037,6 +1129,10 @@ CONTAINS
        endif  
        allocate (Tersoff_s(0:ngx-1,0:ngy-1,N_sampling_z,nV))
        allocate (Tersoff_c(0:ngx-1,0:ngy-1,N_sampling_z,nV))
+       if(NSPIN.eq.2) then
+         allocate (Tersoff_s_dw(0:ngx-1,0:ngy-1,N_sampling_z,nV))
+         allocate (Tersoff_c_dw(0:ngx-1,0:ngy-1,N_sampling_z,nV))
+       endif  
        if(LDIDV) allocate (Tersoff_s2(npts,ndiv))
        allocate (currentSQ(0:ngx-1,0:ngy-1))
        allocate (TH_s(0:ngx-1,0:ngy-1))

@@ -47,6 +47,7 @@ CONTAINS
 ! matching at the corresponding plane
 
    A_G(0:ngx-1,0:ngy-1) = temp (0:ngx-1,0:ngy-1,i_s-1) ! sample
+   if(i_t.lt.0) i_t = 1
    C_G(0:ngx-1,0:ngy-1) = temp (0:ngx-1,0:ngy-1,i_t-1) ! tip
 
 

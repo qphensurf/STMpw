@@ -17,6 +17,7 @@
   integer :: Number_of_SPIN, Total_Bands, Number_of_KPOINTS
   integer ::  unitWF, unitI, unitdI,unitMAP,unitTH,unitTIP,unitTHcub,unitdITHcub,unitIV
   integer ::  unitIdat, unitdIdat, unitTHdat, unitdITHdat, unitTIPdat
+  integer ::  unitTHdat_sp, unitTHdat_spp, unitdITHdat_sp, unitdITHdat_spp
   integer ::  spin1,  kp, iband, tband, sband
   integer ::  ios, N_sampling_z 
   integer :: ix, iy, iz, ip
@@ -55,6 +56,7 @@
 !logical
   LOGICAL :: LGAMMA, fichero, Bardeen, LDIDV, MAPfile
   LOGICAL :: wsxm = .false., dat = .false., cube = .false.
+  LOGICAL :: write_spin = .true.
 
 ! characters
  character ( len = 99) :: NameWF,NameMAP,NamePOSCAR,NameOUTCAR,name_file,cmd
@@ -85,9 +87,11 @@
       REAL(q), ALLOCATABLE :: currentSQ (:,:), intensity (:,:,:,:)
       REAL(q), ALLOCATABLE :: intensity2 (:,:)
       REAL(q), ALLOCATABLE :: Tersoff_s (:,:,:,:)
+      REAL(q), ALLOCATABLE :: Tersoff_s_dw (:,:,:,:)
       REAL(q), ALLOCATABLE :: Tersoff_s2 (:,:)
       REAL(q), ALLOCATABLE :: Tersoff_t (:,:,:,:)
       REAL(q), ALLOCATABLE :: Tersoff_c (:,:,:,:)
+      REAL(q), ALLOCATABLE :: Tersoff_c_dw (:,:,:,:)
       REAL(q), ALLOCATABLE :: TH_t (:,:)
       REAL(q), ALLOCATABLE :: TH_s (:,:)
       REAL(q), ALLOCATABLE :: dintensity_dV (:,:,:,:)
