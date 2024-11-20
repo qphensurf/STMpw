@@ -247,11 +247,11 @@ program STMpw
       if (LDIDV) then
 !       do i=1,npts
 !         if(cdIdV(i,3).lt.z_s*A(3,3)) then
-!           write(*,'(A)') "We do not calculate de dIdV curves because one point is out of range:"
+!           write(*,'(A)') "We do not calculate the dIdV curves because one point is out of range:"
 !           write(*,*) cdIdV(i,3)*bohr," < ", z_s*A(3,3)*bohr
 !           LDIDV = 0
 !         elseif(cdIdV(i,3).gt.(z_s*A(3,3)+Zmax)) then
-!           write(*,'(A)') "We do not calculate de dIdV curves because one point is out of range:"
+!           write(*,'(A)') "We do not calculate the dIdV curves because one point is out of range:"
 !           write(*,*) cdIdV(i,3)*bohr," > ", (z_s*A(3,3)+Zmax)*bohr
 !           LDIDV = 0
 !         endif
@@ -285,7 +285,7 @@ program STMpw
          enddo
          enddo
           if(ngp(i,1).eq.ngx+100) then
-           write(*,'(A,i4,A)') "We do not calculate de dIdV curves because point",i," is out of range:"
+           write(*,'(A,i4,A)') "We do not calculate the dIdV curves because point",i," is out of range:"
            write(*,'(A,2F8.3,A)') "(",(cdIdV(i,j)*bohr,j=1,2),") not in the unit cell."
            LDIDV = .false.
           endif
@@ -296,7 +296,7 @@ program STMpw
           endif
          enddo
           if(ngp(i,3).eq.N_sampling_z+100) then
-           write(*,'(A,i4,A)') "We do not calculate de dIdV curves because point",i," is out of range:"
+           write(*,'(A,i4,A)') "We do not calculate the dIdV curves because point",i," is out of range:"
            write(*,'(F8.3,A,F8.3,A,F8.3,A)') & 
                    cdIdV(i,3)*bohr," not in [", z_s*A(3,3)*bohr,",",(z_s*A(3,3)+Zmax)*bohr,"]"
            LDIDV = .false.

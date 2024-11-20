@@ -19,20 +19,28 @@ program Imagen_gwy
        real (q), allocatable :: z (:), x (:), y (:)
        real (q), allocatable :: zvalue (:,:)
        real (q), allocatable :: temp (:,:)
-       logical :: Bardeen, present
-       character (len = 80) :: line
+       logical :: Bardeen, present, presentgz
+       character (len = 80) :: line, name_file
+       character (len = 6) :: name
        double precision :: alat, lat(3,3), mdl, xplot, yplot, ymax
 
 ! Read unit cell from POSCAR
 
        line='POSCAR'
        inquire(file=line, exist=present)
-       if(.NOT.present) then
-         write(*,'(A6,A15)') line,' is not present'
-       stop
+       if(present) then
+         open(3,file='POSCAR',status='old')
+       elseif(.NOT.present) then
+         line='../POSCAR'
+         inquire(file=line, exist=present)
+         if(present) then
+           open(3,file='../POSCAR',status='old')
+         elseif(.NOT.present) then
+           write(*,'(A21)') 'POSCAR is not present'
+           stop
+         endif  
        endif
 
-       open(3,file='POSCAR',status='old')
        read(3,'(A80)') line
        read(3,'(F19.14)') alat
        do i=1,3
@@ -54,11 +62,19 @@ program Imagen_gwy
        if(.not.Bardeen) then
          line='TH.dat'
          inquire(file=line, exist=present)
-         if(.NOT.present) then
-           write(*,'(A6,A15)') line,' is not present'
-           stop
+         if(present) then
+           open(2,file='TH.dat',status='old')
+         elseif(.NOT.present) then
+           line='TH.dat.gz'
+           inquire(file=line, exist=presentgz)
+           if(presentgz) then
+             call system ("gunzip TH.dat.gz")
+             open(2,file='TH.dat',status='old')
+           else
+             write(*,'(A6,A15)') line,' is not present'
+             stop
+           endif
          endif
-         open(2,file='TH.dat',status='old')
        endif  
 
        if(Bardeen) then
@@ -89,6 +105,7 @@ program Imagen_gwy
        enddo
 
        close (2)
+       if(presentgz) call system ("gzip TH.dat")
 
 ! test of ordering of coordinate
        if (z(1) > z(2)) then
@@ -130,6 +147,7 @@ program Imagen_gwy
 
         print *, 'Value of the plotting current ?='
         read (*,*) plotting_current
+        write (*,*) plotting_current
 
         do ix = 0, ngx-1
           do iy= 0, ngy-1
@@ -150,7 +168,26 @@ program Imagen_gwy
        y(ngy) = y(ngy-1) + (ny-1)*(y(ngy-1)+y(1))+y(1)
        ymax = (x(ngx-1) + (nx-1)*(x(ngx-1)+x(1))+x(1))*lat(1,2) + y(ngy)*lat(2,2)
 
-       open (unit_topo, file = 'Topography.gwy')
+       if(Bardeen) then
+         if(var.eq.1) then
+           write(name,'(F4.1)') Hei
+           name_file = 'Topography_Bardeen_ch_'//trim(adjustl(name))//'A.gwy'      
+         else
+           write(name,'(ES6.0)') plotting_current
+           name_file = 'Topography_Bardeen_cc_'//trim(adjustl(name))//'.gwy'      
+         endif
+       else
+         if(var.eq.1) then
+           write(name,'(F4.1)') Hei
+           name_file = 'Topography_ch_'//trim(adjustl(name))//'A.gwy'      
+         else
+           write(name,'(ES6.0)') plotting_current
+           name_file = 'Topography_cc_'//trim(adjustl(name))//'.gwy'      
+         endif
+       endif
+
+       open (unit_topo, file = name_file)
+
        do ix = 1, nx
         do jx= 0, ngx-1
          do iy = 1, ny
