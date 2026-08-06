@@ -1,16 +1,20 @@
 # For intel compiler:
-FC = ifort   
-# With intel byterecl should match VASP compilation
-FLAGS =  -O -assume byterecl
+FC = ifx #ifort   
 
-# For gfortran:
-#FC = gfortran
-#FLAGS = -O
-
-# It must be linked with a fftw implementation, crutial for performance
-#LINK = /usr/lib/x86_64-linux-gnu/libfftw3.so.3
+# With intel, byterecl should match VASP compilation
+# For OpenMP use -qopenmp
+FLAGS =  -O2 -xHost -fpp -qopenmp -assume byterecl
 
 LINK = -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_intel_lp64.a ${MKLROOT}/lib/intel64/libmkl_sequential.a ${MKLROOT}/lib/intel64/libmkl_core.a -Wl,--end-group -lpthread -lm -ldl
+
+## For gfortran:
+#FC = gfortran
+## For OpenMP use -fopenmp
+#FLAGS = -O0 -g -cpp -fcheck=all -fbacktrace -fopenmp
+#FLAGS = -O3 -march=native -cpp -fopenmp
+#
+## It must be linked with a fftw implementation, crutial for performance
+#LINK = /usr/lib/x86_64-linux-gnu/libfftw3.so.3
 
 OBJ = declaration.o declfft.o determinequantities.o  \
 	volumen.o Fourier.o currentBardeen.o  \

@@ -5,7 +5,7 @@
 
 !fft3w.f
 
-	integer *8 plan
+!      integer *8 plan
 
       INTEGER FFTW_R2HC
       PARAMETER (FFTW_R2HC=0)

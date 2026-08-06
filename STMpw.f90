@@ -9,8 +9,18 @@ program STMpw
   use Fourier
   use currentBardeen
   use mappingscar_gen
+#ifdef _OPENMP  
+    use omp_lib
+#endif
   implicit none
 
+#ifdef _OPENMP  
+  !$omp parallel
+  !$omp single
+    write(*,'(A,I2,A)') 'OpenMP run using ', omp_get_num_threads(), ' threads'
+  !$omp end single
+  !$omp end parallel
+#endif
 
 ! test if input.STMpw exists, if not stop
      inquire (file = 'input.STMpw', exist = fichero)
@@ -383,16 +393,16 @@ program STMpw
      t_wf = 0.0_q
      t_ma = 0.0_q
 
-     call cpu_time(start)
+     start = wall_time()
 
          BANDS: do iband=1,Total_Bands
 
        IREC = IREC + 1
 
        CW =(0.0,0.0)
-       call cpu_time(st_tmp)
+       st_tmp = wall_time()
        read (unitWF, REC = IREC) ( CW (I), I = 1, NPL )
-       call cpu_time(fi_tmp)
+       fi_tmp = wall_time()
        t_wf = t_wf + fi_tmp - st_tmp
 
        
@@ -408,9 +418,9 @@ program STMpw
 ! obtain 2-D coefficients for the surface and the tip
 ! by performing the exponential matching
 
-   call cpu_time(st_tmp)
+   st_tmp = wall_time()
    call matching (CW, A_S, C_T, ngx, ngy, ngz, z_s,z_t,IGX,IGY,IGZ,NPL,temp)
-   call cpu_time(fi_tmp)
+   fi_tmp = wall_time()
    t_ma = t_ma + fi_tmp - st_tmp
 
      A_G(:,:,iband)=A_S(:,:)
@@ -418,7 +428,7 @@ program STMpw
 ! close Loop on bands
 
            enddo BANDS
-     call cpu_time(finish)
+     finish = wall_time()
      write (*,'(A, F8.1, A)') "     Time to read and match wavefunctions = ", finish-start, " s"
      write (*,'(A, F8.1, A)') "       Time to read wavefunctions = ", t_wf, " s"
      write (*,'(A, F8.1, A)') "       Time to match wavefunctions = ", t_ma, " s"
@@ -432,7 +442,7 @@ program STMpw
 ! positions in the cell and from Z_min to Z_max.
 ! Loop on tip-surface distances:
 
-       call cpu_time(start)
+       start = wall_time() 
        write(*,*) "   Computing current ..."
 
 ! Loop on voltages
@@ -632,13 +642,13 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
  
            enddo Heights
          enddo VOLTAGES  
-     call cpu_time(finish)
+     finish = wall_time()
      write (*,'(A, F8.1, A)') "    Time for current = ", finish-start, " s"
 
 ! Calculation on dIdV curves
 
     if(LDIDV) then 
-       call cpu_time(start)
+       start = wall_time()
        write(*,*) "   Computing dIdV curves ..."
 
   npts_dIdV: do ip = 1,npts
@@ -784,7 +794,7 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
 
          enddo dIdV      
         enddo npts_dIdV
-     call cpu_time(finish)
+     finish = wall_time() 
      write (*,'(A, F8.1, A)') "    Time for computing dIdV curves = ", finish-start, " s"
     endif 
 
@@ -805,7 +815,7 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
 ! and read by imagen.f into Mathematica
 
         write(*,*) "Writing files ..."
-        call cpu_time(start)
+        start = wall_time() 
         if(wsxm) write(*,'(A,F8.0)') "Output in WSxM format. Output will be multiplied by ",factor
         if(dat) write(*,'(A)') "Output for gnuplot"
         if(cube) write(*,'(A)') "Output for TH in cube format"
@@ -1001,7 +1011,7 @@ dintensity_dV(:,:,iz,jv) = dintensity_dV(:,:,iz,jv) + 2.0*constant_dIdV * Fermi_
      endif ! Bardeen
     endif ! dIdV curves
 
-     call cpu_time(finish)
+     finish = wall_time() 
      write (*,'(A, F8.1, A)') " Time to write files = ", finish-start, " s"
 
 100  if (ios>0) then
@@ -1228,11 +1238,12 @@ CONTAINS
 ! we define z_t (matching for the tip here:
 ! z_t = Ztip - 2.0 angstroems
 
-       z_t = coor_tip - 2.0 / (lat_par * cell(3,3))
-
      if(Bardeen) then
+      z_t = coor_tip - 2.0 / (lat_par * cell(3,3))
       write(*,'(A,F10.5)') "Coord. tip = ", coor_tip
       write(*,'(A,F10.6)') "z_t = ", z_t
+     else
+      z_t = 0.5
      endif
 
 ! if z_s < 0 it indicates the distance above the topmost atom
@@ -1291,5 +1302,15 @@ CONTAINS
        return
        end subroutine test_POSCAR 
 
+      double precision function wall_time()
+
+#ifdef _OPENMP
+      use omp_lib
+      wall_time = omp_get_wtime()
+#else
+      call cpu_time(wall_time)
+#endif
+
+   end function wall_time
 
 end program STMpw

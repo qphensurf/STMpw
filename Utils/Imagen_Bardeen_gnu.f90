@@ -38,9 +38,11 @@ program Imagen_gnu
          do iy= 0, ngy-1
            do ix = 0, ngx-1
              read (2, '(4g14.4)') z(iz), y(iy), x(ix), intensity(ix,iy,iz)
+       if(intensity(ix,iy,iz).lt.0.0) intensity(ix,iy,iz)=-1.0*intensity(ix,iy,iz)
            enddo
          enddo
        enddo
+       
 
        close (2)
 

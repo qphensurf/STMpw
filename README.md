@@ -31,6 +31,8 @@ It is required to provide a FFTW implementation. The performance of the program 
  
 The Makefile file must be adapted to your system by choosing a FORTRAN compiler and a FFTW library.
 
+Parallelization using OpenMP is available. The scaling has been tested up to 8 threads with significant speedup.
+
 ## Usage
 
 1.  You must run VASP with some requirements:

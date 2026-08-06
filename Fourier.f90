@@ -27,28 +27,42 @@ CONTAINS
    complex (q) :: temp(0:ngx-1,0:ngy-1,0:ngz-1),caca
    integer :: ix, iy, iz ,l, i_s, i_t,test
 
-   temp = (0,0)
+   real(q) :: t0, t1
+
+!   temp = (0,0)
+
+!$omp parallel do collapse(2) schedule(static)
+do iz = 0, ngz-1
+   do iy = 0, ngy-1
+      do ix = 0, ngx-1
+         temp(ix,iy,iz) = (0.0_q,0.0_q)
+      end do
+   end do
+end do
+!$omp end parallel do
+
    A_G = (0,0)
    C_G = (0,0)
+
+   !$omp parallel do schedule(static)
    do l = 1, NPL
    temp (IGX(l)-1,IGY(l)-1,IGZ(l)-1) = CW(l)*1.0_q
    enddo
+   !$omp end parallel do
 
    call fft1d_r (temp, ngx, ngy, ngz)
-
-
 
 ! find index for the matching
 
    i_s = mod (int(z_s*ngz), ngz)
    i_t = mod (int(z_t*ngz), ngz)
 
+!   write(*,*) "i_t, z_s, z_t, ngz = ",i_t, z_s, z_t, ngz
 
 ! matching at the corresponding plane
 
    A_G(0:ngx-1,0:ngy-1) = temp (0:ngx-1,0:ngy-1,i_s-1) ! sample
    C_G(0:ngx-1,0:ngy-1) = temp (0:ngx-1,0:ngy-1,i_t-1) ! tip
-
 
    return
    end subroutine matching 
@@ -63,18 +77,48 @@ CONTAINS
    integer i_x, i_y,ngx, ngy, ngz
    complex (q) matrix (0:ngz-1)
    complex (q) temp (0:ngx-1,0:ngy-1,0:ngz-1)
+   real(q) :: t0, t1
+   integer *8 plan
 
-   do i_x = 0, ngx-1
+!   do i_x = 0, ngx-1
+!   do i_y = 0, ngy-1
+!   matrix(:) = temp (i_x,i_y,:)
+!   call dfftw_plan_dft_1d (plan,ngz,matrix,matrix,FFTW_BACKWARD, FFTW_ESTIMATE)
+!        call dfftw_execute (plan)
+!        call dfftw_destroy_plan(plan)
+!
+!   temp (i_x,i_y,:) = matrix(:)
+!
+!   enddo
+!   enddo
+
+!     Create the FFTW plan from one thread only.
+!     FFTW planner calls are not thread-safe.
+!     FFTW_UNALIGNED is used because the private matrix arrays used by
+!     dfftw_execute_dft may not have the same alignment as plan_matrix.
+!$omp critical(fftw_planner_lock)
+      call dfftw_plan_dft_1d(plan, ngz, matrix, matrix, &
+                             FFTW_BACKWARD, FFTW_ESTIMATE + FFTW_UNALIGNED)
+!$omp end critical(fftw_planner_lock)
+
+!$omp parallel private(matrix,i_x,i_y)
+!$omp do collapse(2) schedule(dynamic)
+do i_x = 0, ngx-1
    do i_y = 0, ngy-1
-   matrix(:) = temp (i_x,i_y,:)
-   call dfftw_plan_dft_1d (plan,ngz,matrix,matrix,FFTW_BACKWARD, FFTW_ESTIMATE)
-        call dfftw_execute (plan)
-        call dfftw_destroy_plan(plan)
 
-   temp (i_x,i_y,:) = matrix(:)
+      matrix(:)=temp(i_x,i_y,:)
+      call dfftw_execute_dft(plan,matrix,matrix)
+      temp(i_x,i_y,:)=matrix(:)
 
    enddo
-   enddo
+enddo
+!$omp end do
+!$omp end parallel
+
+!     Destroy the FFTW plan from one thread only.
+!$omp critical(fftw_planner_lock)
+      call dfftw_destroy_plan(plan)
+!$omp end critical(fftw_planner_lock)
 
    end subroutine fft1d_r
 
@@ -88,6 +132,7 @@ CONTAINS
    integer, parameter :: q = SELECTED_REAL_KIND(10)
    integer ngx, ngy, ngz
    complex (q) matrix (0:ngx-1,0:ngy-1,0:ngz-1)
+   integer *8 plan
 
    call dfftw_plan_dft_3d (plan,ngx,ngy,ngz,matrix,matrix,FFTW_FORWARD, FFTW_ESTIMATE)
         call dfftw_execute (plan)
@@ -104,6 +149,7 @@ CONTAINS
    integer, parameter :: q = SELECTED_REAL_KIND(10)
    integer ngx, ngy, ngz
    complex (q) matrix (0:ngx-1,0:ngy-1,0:ngz-1)
+   integer *8 plan
 
    call dfftw_plan_dft_3d (plan,ngx,ngy,ngz,matrix,matrix,FFTW_BACKWARD, FFTW_ESTIMATE)
         call dfftw_execute (plan)
@@ -120,6 +166,7 @@ CONTAINS
    integer ngx, ngy
    integer, parameter :: q = SELECTED_REAL_KIND(10)
    complex (q) matrix (0:ngx-1,0:ngy-1)
+   integer *8 plan
 
    call dfftw_plan_dft_2d (plan,ngx,ngy,matrix,matrix,FFTW_FORWARD, FFTW_ESTIMATE)
         call dfftw_execute (plan)
@@ -136,6 +183,7 @@ CONTAINS
    integer, parameter :: q = SELECTED_REAL_KIND(10)
    integer ngx, ngy
    complex (q) matrix (0:ngx-1,0:ngy-1)
+   integer *8 plan
 
    call dfftw_plan_dft_2d (plan,ngx,ngy,matrix,matrix,FFTW_BACKWARD, FFTW_ESTIMATE)
         call dfftw_execute (plan)
