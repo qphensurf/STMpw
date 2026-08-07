@@ -1,5 +1,4 @@
-This directory includes some useful utilities and scripts which can be used to plot the results
-using gnuplot. 
+This directory includes some useful utilities and scripts which can be used to process and plot the results:
 * Imagen_Bardeen_gnu.f90 and Cond_gnu.f90: fortran programs to process raw data to be plotted using gnuplot.
 They can be compiled by doing **make all** in the main directory to generate Imagen_Bardeen_gnu.out and Cond_gnu.out. They are a prerequisite for the provided scripts.
 * topo_V_cc.sh (topo_V_ch.sh): script to plot constant current (height) topographic images in the Tersoff-Hamman approximation.
