@@ -76,7 +76,7 @@
        endif 
 
        if ( line(4:8) .eq. 'ENCUT' ) then
-        read(line(12:18),'(F7.1)') enmax
+        read(line(12:18),*) enmax
         write(*,'(A,F7.1)') " ENCUT =", enmax
         if((enmax-enmaxw).gt.0.01) then
          write(*,'(A)') &
