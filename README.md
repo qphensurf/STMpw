@@ -119,4 +119,4 @@ GNU General Public License v3.0
 
 In case the use of the code leads to a scientific publication please cite it as: 
 
-Lorente, N. and Robles, R. STMpw (Zenodo, 2019). https://doi.org/10.5281/ZENODO.3581159
+Lorente, N. and Robles, R. STMpw (Zenodo, 2019). https://doi.org/10.5281/ZENODO.3581158
