@@ -121,7 +121,7 @@ program STMpw
 ! the first record contains the record length, get it ...
       RDUM=0._q
       READ(13,REC=1,ERR=17421) RDUM,RISPIN ; IDUM=NINT(RDUM)
-      IF ((IDUM<=0).OR.(IDUM>10000000)) IDUM=ICMPLX  ! -> error reading
+      IF (IDUM<=0) IDUM=ICMPLX  ! -> error reading
       GOTO 17422
 17421 CONTINUE
       IDUM=ICMPLX

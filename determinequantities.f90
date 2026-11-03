@@ -1,5 +1,6 @@
     module determinequantities
     
+      use iso_fortran_env, only: int64
 ! Code for reading a NORMWAVECAR function
 !  coded by A. Arnau and N. Lorente
 !
@@ -14,7 +15,9 @@ contains
 
       INTEGER, PARAMETER :: q =SELECTED_REAL_KIND(10)
       INTEGER, PARAMETER :: qs=SELECTED_REAL_KIND(5)
-      INTEGER, PARAMETER :: ICMPLX=16,MRECL=10000000
+        INTEGER, PARAMETER :: ICMPLX=16
+        integer(int64) :: wavecar_size, expected_size
+        integer(int64) :: recl64, nrecords64
       INTEGER, PARAMETER ::  IU0=6
 
       REAL(q)  RDUM, RISPIN, norma, ENMAXF
@@ -30,7 +33,7 @@ contains
 ! the first record contains the record length, get it ...
       RDUM=0._q
       READ(12,REC=1,ERR=17421) RDUM,RISPIN ; IDUM=NINT(RDUM)
-      IF ((IDUM<=0).OR.(IDUM>10000000)) IDUM=ICMPLX  ! -> error reading
+        IF (IDUM<=0) IDUM=ICMPLX  ! error reading RECL
       GOTO 17422
 17421 CONTINUE
       IDUM=ICMPLX
@@ -69,6 +72,20 @@ contains
         Number_of_KPOINTS = NKPTS
         Total_Bands = NBANDS
 
+! Validate WAVECAR size using explicitly 64-bit arithmetic.
+          inquire(unit=12,size=wavecar_size)
+          recl64=int(IDUM,int64)
+          nrecords64=2_int64+int(ISPIN,int64)*int(NKPTS,int64)* &
+       &             (int(NBANDS,int64)+1_int64)
+          expected_size=recl64*nrecords64
+          if(wavecar_size.ne.expected_size) then
+            write(IU0,'(A,I0)') 'WAVECAR size       = ',wavecar_size
+            write(IU0,'(A,I0)') 'Expected size      = ',expected_size
+            write(IU0,'(A,I0)') 'WAVECAR RECL bytes = ',recl64
+            write(IU0,'(A,I0)') 'Number of records  = ',nrecords64
+            write(IU0,*) 'WAVECAR size does not match its header'
+            stop
+          endif
 	close (12)
 
 	return
